@@ -1,0 +1,60 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27004.2010
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{E7B5CDBF-2A8E-4DA2-B08D-D845E2E844E4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{EF73966B-0E2A-4C14-81EC-714F2CF2F91A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Bots", "Bots", "{A30D74CD-2921-4B94-B6C5-00E40DA9AF15}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Botje.DB", "Botje.DB\Botje.DB.csproj", "{A9EA1ADF-2D2A-4AB4-A6E6-A7CCD8AF6605}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Botje.Messaging", "Botje.Messaging\Botje.Messaging.csproj", "{A17EEA82-66F3-4776-8073-B216F5B49C4E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Botje.Core", "Botje.Core\Botje.Core.csproj", "{A2DC9998-CE7E-4CE4-93E8-76832E1AF3D8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PokemonRaidBot", "PokemonRaidBot\PokemonRaidBot.csproj", "{E62A98B9-4888-4053-84DF-0576C7FD74D2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{54C66B98-1DE0-4FD6-A41B-CF82A8005FB2}"
+	ProjectSection(SolutionItems) = preProject
+		..\.gitignore = ..\.gitignore
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A9EA1ADF-2D2A-4AB4-A6E6-A7CCD8AF6605}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A9EA1ADF-2D2A-4AB4-A6E6-A7CCD8AF6605}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A9EA1ADF-2D2A-4AB4-A6E6-A7CCD8AF6605}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A9EA1ADF-2D2A-4AB4-A6E6-A7CCD8AF6605}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A17EEA82-66F3-4776-8073-B216F5B49C4E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A17EEA82-66F3-4776-8073-B216F5B49C4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A17EEA82-66F3-4776-8073-B216F5B49C4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A17EEA82-66F3-4776-8073-B216F5B49C4E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2DC9998-CE7E-4CE4-93E8-76832E1AF3D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2DC9998-CE7E-4CE4-93E8-76832E1AF3D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2DC9998-CE7E-4CE4-93E8-76832E1AF3D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2DC9998-CE7E-4CE4-93E8-76832E1AF3D8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E62A98B9-4888-4053-84DF-0576C7FD74D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E62A98B9-4888-4053-84DF-0576C7FD74D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E62A98B9-4888-4053-84DF-0576C7FD74D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E62A98B9-4888-4053-84DF-0576C7FD74D2}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A9EA1ADF-2D2A-4AB4-A6E6-A7CCD8AF6605} = {E7B5CDBF-2A8E-4DA2-B08D-D845E2E844E4}
+		{A17EEA82-66F3-4776-8073-B216F5B49C4E} = {E7B5CDBF-2A8E-4DA2-B08D-D845E2E844E4}
+		{A2DC9998-CE7E-4CE4-93E8-76832E1AF3D8} = {E7B5CDBF-2A8E-4DA2-B08D-D845E2E844E4}
+		{E62A98B9-4888-4053-84DF-0576C7FD74D2} = {A30D74CD-2921-4B94-B6C5-00E40DA9AF15}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9A93A4EC-4458-4AD5-96CF-BD9D0CEBE948}
+	EndGlobalSection
+EndGlobal

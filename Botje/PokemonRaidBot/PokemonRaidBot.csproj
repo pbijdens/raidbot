@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="default-settings.json" />
+    <None Remove="settings.debug.json" />
+    <None Remove="settings.release.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="default-settings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="settings.debug.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="settings.release.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Ninject" Version="3.3.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Botje.Core\Botje.Core.csproj" />
+    <ProjectReference Include="..\Botje.DB\Botje.DB.csproj" />
+    <ProjectReference Include="..\Botje.Messaging\Botje.Messaging.csproj" />
+  </ItemGroup>
+
+</Project>
