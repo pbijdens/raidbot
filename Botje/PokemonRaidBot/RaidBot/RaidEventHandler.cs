@@ -382,7 +382,7 @@ namespace PokemonRaidBot.RaidBot
                 var str = string.Join(", ", naySayers.Select(x => $"{x.ShortName()}"));
                 sb.AppendLine($"<b>Afgemeld:</b> {str}");
             }
-            sb.AppendLine($"\r\n<i>Update: {DateTime.UtcNow.ToString("u")}/{DateTime.UtcNow.Millisecond}</i>");
+            sb.AppendLine($"\r\n#raid updated: <i>{DateTime.UtcNow.AsFullTime()}</i>");
             return sb.ToString();
         }
 
@@ -434,7 +434,7 @@ namespace PokemonRaidBot.RaidBot
                 counter += participants.Count;
             }
 
-            var tpsSub = string.Join("/", tpsElements);
+            var tpsSub = string.Join(" ", tpsElements);
             tps = $"{counter} ({tpsSub})";
 
             if (counter > 0)

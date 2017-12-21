@@ -50,6 +50,12 @@ namespace Botje.Core.Utils
             return converted.ToString("HH:mm");
         }
 
+        public static string AsFullTime(this DateTime utc)
+        {
+            DateTime converted = TimeZoneInfo.ConvertTimeFromUtc(utc, _tzInfo);
+            return converted.ToString("HH:mm:ss.fff");
+        }
+
         /// <summary>
         /// Human readable timespan.
         /// </summary>
