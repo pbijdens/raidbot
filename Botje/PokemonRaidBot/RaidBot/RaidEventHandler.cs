@@ -388,7 +388,6 @@ namespace PokemonRaidBot.RaidBot
 
         private static void CalculateParticipationBlock(RaidParticipation raid, StringBuilder sb, out string tps)
         {
-            string[] icons = new string[] { "🖤", "❤️", "💙", "💛" };
             List<string> tpsElements = new List<string>();
             tps = "";
             int counter = 0;
@@ -430,7 +429,7 @@ namespace PokemonRaidBot.RaidBot
                         sb.AppendLine();
                     }
                 }
-                tpsElements.Add($"{participants.Sum(x => 1 + x.Extra)}{icons[(int)team]}");
+                tpsElements.Add($"{participants.Sum(x => 1 + x.Extra)}{team.AsIcon()}");
                 counter += participants.Count;
             }
 
