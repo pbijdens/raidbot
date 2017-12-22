@@ -4,6 +4,7 @@ using Botje.DB;
 using Botje.Messaging;
 using Botje.Messaging.Events;
 using Botje.Messaging.Models;
+using Botje.Messaging.PrivateConversation;
 using Ninject;
 using PokemonRaidBot.RaidBot.Entities;
 using PokemonRaidBot.RaidBot.Utils;
@@ -26,6 +27,8 @@ namespace PokemonRaidBot.RaidBot
         private const string QrPublish = "qr.pub"; // qr.pub:{raid}
         private const string QrSetTime = "qr.sti"; // qr.sti:{raid}:{ticks}
         private const string QrArrived = "qr.arr"; // qr.aee:{raid}
+        private const string QrSetAlignment = "qr.cco"; // qr.cco:{raid}
+        private const string QrAlignmentSelected = "qr.als"; // qr.als:{raid}:{teamid}
         private const string IqPrefix = "qr-";
 
         [Inject]
@@ -39,6 +42,9 @@ namespace PokemonRaidBot.RaidBot
 
         [Inject]
         public ISettingsManager Settings { get; set; }
+
+        [Inject]
+        public IPrivateConversationManager ConversationManager { get; set; }
 
         public void Shutdown()
         {
@@ -152,7 +158,61 @@ namespace PokemonRaidBot.RaidBot
                     }
                     UpdateRaidMessage(e.CallbackQuery.Message?.Chat?.ID, e.CallbackQuery.Message?.MessageID, e.CallbackQuery.InlineMessageId, args[0], e.CallbackQuery.Message?.Chat?.Type);
                     break;
+                case QrSetAlignment: // :{raid}
+                    _log.Info($"{e.CallbackQuery.From.DisplayName()} wants to change the gym alignment {args[0]}");
+                    Client.AnswerCallbackQuery(e.CallbackQuery.ID, $"Pas de kleur aan in je privé-chat met de bot.");
+                    try
+                    {
+                        Client.SendMessageToChat(e.CallbackQuery.From.ID, $"Welke kleur heeft de gym op dit moment?", "HTML", true, true, null, CreateAlignmentMenu(args[0]));
+                    }
+                    catch (Exception ex)
+                    {
+                        _log.Warn($"User {e.CallbackQuery.From.ID} tried to change the gym-alignment but couldn't becasue of error {ex.GetType().Name} - {ex.Message}.");
+                    }
+                    break;
+                case QrAlignmentSelected: // :{raid}:{alignment}
+                    var team = (Team)Int32.Parse(args[1]);
+                    _log.Info($"{e.CallbackQuery.From.DisplayName()} changed the gym alignment for {args[0]} to {team}");
+                    Client.EditMessageText($"{e.CallbackQuery.Message.Chat.ID}", e.CallbackQuery.Message.MessageID, null, "Gym kleur is aangepast. Je moet zelf even de gepubliceerde raid verversen.");
+                    Client.AnswerCallbackQuery(e.CallbackQuery.ID, $"Dank je wel. Ververs zelf even de gepubliceerde raid.");
+                    UpdateGymAlignment(e.CallbackQuery.From, args[0], team);
+                    break;
             }
+        }
+
+        private void UpdateGymAlignment(User from, string raidPublicID, Team team)
+        {
+            var raidCollection = DB.GetCollection<RaidParticipation>();
+            lock (_raidLock)
+            {
+                var raid = raidCollection.Find(x => x.PublicID == raidPublicID).First();
+                if (null != raid)
+                {
+                    raid.Raid.Alignment = team;
+                    raidCollection.Update(raid);
+                }
+            }
+        }
+
+        private InlineKeyboardMarkup CreateAlignmentMenu(string raidPublicID)
+        {
+            InlineKeyboardMarkup result = new InlineKeyboardMarkup();
+            result.inline_keyboard = new List<List<InlineKeyboardButton>>();
+
+            List<InlineKeyboardButton> row;
+
+            foreach (var value in Enum.GetValues(typeof(Team)).OfType<Team>())
+            {
+                row = new List<InlineKeyboardButton>();
+                row.Add(new InlineKeyboardButton
+                {
+                    text = $"{value.AsReadableString()}",
+                    callback_data = $"{QrAlignmentSelected}:{raidPublicID}:{(int)value}"
+                });
+                result.inline_keyboard.Add(row);
+            }
+
+            return result;
         }
 
         private void UpdateUserRaidJoinOrUpdateAttendance(User user, string raidID)
@@ -475,6 +535,7 @@ namespace PokemonRaidBot.RaidBot
 
                 row = new List<InlineKeyboardButton>();
                 row.Add(new InlineKeyboardButton { text = "🔄", callback_data = $"{QrRefresh}:{raid.PublicID}" });
+                row.Add(new InlineKeyboardButton { text = "💟", callback_data = $"{QrSetAlignment}:{raid.PublicID}" });
                 row.Add(new InlineKeyboardButton { text = "Delen", switch_inline_query = $"{shareString}" });
                 if (!raid.IsPublished)
                 {
