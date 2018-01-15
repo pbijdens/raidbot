@@ -47,6 +47,20 @@ namespace Botje.Messaging.Models
             return result;
         }
 
+        public string UsernameOrName()
+        {
+            string result = $"{Username}";
+            if (string.IsNullOrWhiteSpace(result) && (!string.IsNullOrEmpty(FirstName) || !string.IsNullOrEmpty(LastName)))
+            {
+                result = $"{FirstName} {LastName}".Trim();
+            }
+            if (IsBot)
+            {
+                result += $" (bot)";
+            }
+            return result;
+        }
+
         public string ShortName()
         {
             if (!string.IsNullOrWhiteSpace(Username)) return Username;

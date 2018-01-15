@@ -15,10 +15,18 @@ namespace Botje.Messaging.PrivateConversation
         string GetState(User user);
 
         /// <summary>
+        /// Retrieve user-state and anys tored data for that state.
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        string GetState(User user, out string[] data);
+
+        /// <summary>
         /// Update user-state
         /// </summary>
         /// <param name="user"></param>
         /// <param name="state"></param>
-        void SetState(User user, string state);
+        void SetState(User user, string state, string[] data = null);
     }
 }

@@ -82,5 +82,48 @@ namespace Botje.Core.Utils
             // use custom formatter to get the string
             return String.Format(new HMSFormatter(), cutoff[cutoff.Keys[near]], ts.Days, ts.Hours, ts.Minutes, ts.Seconds);
         }
+
+        private static readonly string[] Maanden = new string[] { "januari", "februari", "maart", "april", "mei", "juni", "juli", "augustus", "september", "oktober", "november", "december" };
+
+        public static string AsDutchString(DateTime dt)
+        {
+            return $"{dt.Day} {Maanden[dt.Month - 1]} {dt.ToString("HH:mm")}";
+        }
+
+        public static TimeSpan ParseTimeSpan(string v)
+        {
+            TimeSpan result = TimeSpan.Zero;
+            string number = "";
+            foreach (char c in v)
+            {
+                if (char.IsDigit(c))
+                {
+                    number += c;
+                }
+                else
+                {
+                    switch (c)
+                    {
+                        case 'd':
+                            result += TimeSpan.FromDays(Int32.Parse(number));
+                            break;
+                        case 'w':
+                            result += TimeSpan.FromDays(7 * Int32.Parse(number));
+                            break;
+                        case 'h':
+                        case 'u':
+                            result += TimeSpan.FromHours(Int32.Parse(number));
+                            break;
+                    }
+                    number = "";
+                }
+            }
+            if (!string.IsNullOrWhiteSpace(number))
+            {
+                result += TimeSpan.FromDays(Int32.Parse(number));
+            }
+            return result;
+        }
+
     }
 }

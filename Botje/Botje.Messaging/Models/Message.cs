@@ -5,6 +5,11 @@ namespace Botje.Messaging.Models
 {
     public class Message
     {
+        public Message()
+        {
+            Entities = new List<MessageEntity>();
+        }
+
         // message_id Integer Unique message identifier inside this chat
         [DeserializeAs(Name = "message_id")]
         public long MessageID { get; set; }
@@ -73,21 +78,48 @@ namespace Botje.Messaging.Models
         [DeserializeAs(Name = "location")]
         public Location Location { get; set; }
 
-        // not supported for now because we don't need this
-
         // contact Contact Optional. Message is a shared contact, information about the contact
         // media_group_id String  Optional.The unique identifier of a media message group this message belongs to
         // audio Audio   Optional.Message is an audio file, information about the file
+        [DeserializeAs(Name = "audio")]
+        public Audio Audio { get; set; }
+
         // document Document    Optional.Message is a general file, information about the file
+        [DeserializeAs(Name = "document")]
+        public Document Document { get; set; }
+
         // game Game    Optional.Message is a game, information about the game. More about games »
         // photo Array of PhotoSize  Optional.Message is a photo, available sizes of the photo
         // sticker Sticker Optional. Message is a sticker, information about the sticker
+        [DeserializeAs(Name = "sticker")]
+        public Sticker Sticker { get; set; }
+
         // video Video   Optional.Message is a video, information about the video
+        [DeserializeAs(Name = "video")]
+        public Video Video { get; set; }
+
         // voice Voice   Optional.Message is a voice message, information about the file
+        [DeserializeAs(Name = "voice")]
+        public Voice Voice { get; set; }
+
         // video_note VideoNote   Optional.Message is a video note, information about the video message
+        [DeserializeAs(Name = "video_note")]
+        public VideoNote VideoNote { get; set; }
+
         // venue Venue   Optional.Message is a venue, information about the venue
+        [DeserializeAs(Name = "venue")]
+        public Venue Venue { get; set; }
+
         // new_chat_members Array of User   Optional.New members that were added to the group or supergroup and information about them (the bot itself may be one of these members)
+        [DeserializeAs(Name = "new_chat_members")]
+        public List<User> NewChatMembers { get; set; }
+
         // left_chat_member User    Optional.A member was removed from the group, information about them(this member may be the bot itself)
+        [DeserializeAs(Name = "left_chat_member")]
+        public User LeftChatMember { get; set; }
+
+        // not supported for now because we don't need this
+
         // new_chat_title String  Optional.A chat title was changed to this value
         // new_chat_photo  Array of PhotoSize Optional.A chat photo was change to this value
         // delete_chat_photo   True Optional. Service message: the chat photo was deleted
@@ -99,5 +131,21 @@ namespace Botje.Messaging.Models
         // pinned_message Message Optional.Specified message was pinned. Note that the Message object in this field will not contain further reply_to_message fields even if it is itself a reply.
         // invoice Invoice Optional.Message is an invoice for a payment, information about the invoice. More about payments »
         // successful_payment SuccessfulPayment   Optional.Message is a service message about a successful payment, information about the payment. More about payments
+
+        public MessageType Type
+        {
+            get
+            {
+                if (null != Audio) return MessageType.Audio;
+                if (null != Video) return MessageType.Video;
+                if (null != VideoNote) return MessageType.VideoNote;
+                if (null != Voice) return MessageType.Voice;
+                if (null != Document) return MessageType.Document;
+                if (null != Location) return MessageType.Location;
+                if (null != Sticker) return MessageType.Sticker;
+                if (null != Text) return MessageType.TextMessage;
+                return MessageType.TextMessage;
+            }
+        }
     }
 }

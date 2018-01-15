@@ -11,5 +11,7 @@ namespace Botje.Messaging.PrivateConversation
         public User User { get; set; }
 
         public string State { get; set; }
+
+        public string[] Data { get; set; }
     }
 }

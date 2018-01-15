@@ -112,5 +112,7 @@ namespace Botje.Messaging
         /// <param name="queryID"></param>
         /// <param name="results"></param>
         void AnswerInlineQuery(string queryID, List<InlineQueryResultArticle> results);
+
+        void ForwardMessageToChat(long chatID, long sourceChat, long sourceMessageID);
     }
 }
