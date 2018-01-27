@@ -62,6 +62,7 @@ namespace PokemonRaidBot
             kernel.Bind<IBotModule>().To<RaidBot.RaidCreationWizard>().InSingletonScope();
             kernel.Bind<IBotModule>().To<RaidBot.RaidEventHandler>().InSingletonScope();
             kernel.Bind<IBotModule>().To<RaidBot.WhereAmI>().InSingletonScope();
+            kernel.Bind<IBotModule>().To<RaidBot.RaidStatistics>().InSingletonScope();
 
             var modules = kernel.GetAll<IBotModule>().ToList();
 

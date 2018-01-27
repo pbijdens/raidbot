@@ -90,6 +90,12 @@ namespace Botje.Core.Utils
             return $"{dt.Day} {Maanden[dt.Month - 1]} {dt.ToString("HH:mm")}";
         }
 
+        public static string AsLocalShortTime(DateTime dt)
+        {
+            DateTime converted = TimeZoneInfo.ConvertTimeFromUtc(dt, _tzInfo);
+            return dt.ToString("dd-MM-yy HH:mm");
+        }
+
         public static TimeSpan ParseTimeSpan(string v)
         {
             TimeSpan result = TimeSpan.Zero;

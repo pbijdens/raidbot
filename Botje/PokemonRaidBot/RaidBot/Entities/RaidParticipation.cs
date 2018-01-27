@@ -31,5 +31,15 @@ namespace PokemonRaidBot.RaidBot.Entities
             }
             Rejected = new List<User>();
         }
+
+        internal int NumberOfParticipants()
+        {
+            int result = 0;
+            foreach (var entry in Participants.SelectMany(x => x.Value))
+            {
+                result += entry.Extra + 1;
+            }
+            return result;
+        }
     }
 }
