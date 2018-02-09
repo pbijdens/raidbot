@@ -29,6 +29,7 @@ namespace PokemonRaidBot.RaidBot
         private const string CbqManuallyEnterStartTime = "rcw.mes";
         private const string CbqOtherDateSelected = "rcw.ots";
         private const string CbqOtherDateTimeSelected = "rcw.odt";
+        private const string CbqPlayerTeamSelected = "rcw.pts";
 
         private const string StateReadGym = "RCW-READ-GYM";
         private const string StateReadPokemon = "RCW-READ-RAID";
@@ -128,6 +129,30 @@ namespace PokemonRaidBot.RaidBot
                     Client.AnswerCallbackQuery(e.CallbackQuery.ID, $"Opgeslagen, deel nu de raid.");
                     ProcessRaidDone(e);
                     break;
+                case CbqPlayerTeamSelected:
+                    Client.AnswerCallbackQuery(e.CallbackQuery.ID, $"Okee, als jij dat zegt.");
+                    var userSettings = GetOrCreateUserSettings(e.CallbackQuery.From, out var userSettingsCollection);
+                    var team = (Team)(int.Parse(e.CallbackQuery.Data.Split(':')[1]));
+                    userSettings.Team = team;
+                    userSettingsCollection.Update(userSettings);
+                    Client.SendMessageToChat(e.CallbackQuery.From.ID, $"Je nieuwe teamkleur is {team.AsReadableString()}.", "HTML", true, true);
+                    break;
+            }
+        }
+
+        private object _userSettingsLock = new object();
+        private UserSettings GetOrCreateUserSettings(User user, out DbSet<UserSettings> userSettingsCollection)
+        {
+            lock (_userSettingsLock)
+            {
+                userSettingsCollection = DB.GetCollection<UserSettings>();
+                var result = userSettingsCollection.Find(x => x.User.ID == user.ID).FirstOrDefault();
+                if (result == null)
+                {
+                    result = new UserSettings { User = user };
+                    userSettingsCollection.Insert(result);
+                }
+                return result;
             }
         }
 
@@ -180,6 +205,11 @@ namespace PokemonRaidBot.RaidBot
                     {
                         ResetConversation(e.Message.From);
                         ShowMenu(e.Message.From);
+                    }
+                    if (commandText == "/team")
+                    {
+                        ResetConversation(e.Message.From);
+                        Client.SendMessageToChat(e.Message.From.ID, $"Kies jouw team-kleur uit de lijst.", "HTML", true, true, null, CreateTeamMenu());
                     }
                     if (commandText == "/help")
                     {
@@ -335,6 +365,27 @@ namespace PokemonRaidBot.RaidBot
                 {
                     text = $"{value.AsReadableString()}",
                     callback_data = $"{CbqAlignmentSelected}:{(int)value}"
+                });
+                result.inline_keyboard.Add(row);
+            }
+
+            return result;
+        }
+
+        private InlineKeyboardMarkup CreateTeamMenu()
+        {
+            InlineKeyboardMarkup result = new InlineKeyboardMarkup();
+            result.inline_keyboard = new List<List<InlineKeyboardButton>>();
+
+            List<InlineKeyboardButton> row;
+
+            foreach (var value in Enum.GetValues(typeof(Team)).OfType<Team>())
+            {
+                row = new List<InlineKeyboardButton>();
+                row.Add(new InlineKeyboardButton
+                {
+                    text = $"{value.AsReadableString()}",
+                    callback_data = $"{CbqPlayerTeamSelected}:{(int)value}"
                 });
                 result.inline_keyboard.Add(row);
             }
