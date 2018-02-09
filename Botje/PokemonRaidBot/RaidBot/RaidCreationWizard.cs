@@ -26,6 +26,9 @@ namespace PokemonRaidBot.RaidBot
         private const string CbqDone = "rcw.don";
         private const string CbqAlignmentSelected = "rcw.sal";
         private const string CbqTimeSelected = "rcw.sti";
+        private const string CbqManuallyEnterStartTime = "rcw.mes";
+        private const string CbqOtherDateSelected = "rcw.ots";
+        private const string CbqOtherDateTimeSelected = "rcw.odt";
 
         private const string StateReadGym = "RCW-READ-GYM";
         private const string StateReadPokemon = "RCW-READ-RAID";
@@ -101,6 +104,19 @@ namespace PokemonRaidBot.RaidBot
                     Client.AnswerCallbackQuery(e.CallbackQuery.ID, $"Tijd aangepast.");
                     var minutesUntilRaidEnd = int.Parse(e.CallbackQuery.Data.Split(':')[1]);
                     UpdateTime(e.CallbackQuery.From, minutesUntilRaidEnd);
+                    ShowMenu(e.CallbackQuery.From);
+                    break;
+                case CbqManuallyEnterStartTime:
+                    Client.AnswerCallbackQuery(e.CallbackQuery.ID);
+                    Client.SendMessageToChat(e.CallbackQuery.From.ID, $"Geef aan wanneer deze raid gedaan kan worden. Kies een datum uit de lijst.", "HTML", true, true, null, CreateDateMenu());
+                    break;
+                case CbqOtherDateSelected:
+                    Client.AnswerCallbackQuery(e.CallbackQuery.ID);
+                    Client.SendMessageToChat(e.CallbackQuery.From.ID, $"Kies een begin-tijd uit de lijst.", "HTML", true, true, null, CreateTimeMenu(int.Parse(e.CallbackQuery.Data.Split(':')[1])));
+                    break;
+                case CbqOtherDateTimeSelected:
+                    Client.AnswerCallbackQuery(e.CallbackQuery.ID, $"Tijd aangepast.");
+                    UpdateTime(e.CallbackQuery.From, int.Parse(e.CallbackQuery.Data.Split(':')[1]), int.Parse(e.CallbackQuery.Data.Split(':')[2]));
                     ShowMenu(e.CallbackQuery.From);
                     break;
                 case CbqClear:
@@ -229,6 +245,16 @@ namespace PokemonRaidBot.RaidBot
             collection.Update(record);
         }
 
+        private void UpdateTime(User user, int daysFromToday, int hour)
+        {
+            GetOrCreateRaidDescriptionForUser(user, out DbSet<RaidDescription> collection, out RaidDescription record);
+            DateTime whenDate = DateTime.UtcNow + TimeSpan.FromDays(daysFromToday);
+            DateTime raidStartTime = TimeUtils.ToUTC(new DateTime(whenDate.Year, whenDate.Month, whenDate.Day, hour, 0, 0));
+            record.RaidUnlockTime = raidStartTime;
+            record.RaidEndTime = raidStartTime + TimeSpan.FromMinutes(RaidDurationInMinutes);
+            collection.Update(record);
+        }
+
         private void UpdateLocation(User user, Location location)
         {
             GetOrCreateRaidDescriptionForUser(user, out DbSet<RaidDescription> collection, out RaidDescription record);
@@ -326,6 +352,34 @@ namespace PokemonRaidBot.RaidBot
             for (int i = 0; i <= 45; i += 5)
             {
                 buttons.Add(new InlineKeyboardButton { text = $"⛔️: {i}m", callback_data = $"{CbqTimeSelected}:{i}" });
+            }
+            buttons.Add(new InlineKeyboardButton { text = $"Anders...", callback_data = $"{CbqManuallyEnterStartTime}" });
+
+            InlineKeyboardMarkup result = new InlineKeyboardMarkup();
+            result.inline_keyboard = SplitButtonsIntoLines(buttons, maxElementsPerLine: 5, maxCharactersPerLine: 30);
+            return result;
+        }
+
+        private InlineKeyboardMarkup CreateDateMenu()
+        {
+            List<InlineKeyboardButton> buttons = new List<InlineKeyboardButton>();
+            for (int i = 0; i < 30; i++)
+            {
+                DateTime dt = DateTime.Now + TimeSpan.FromDays(i);
+                buttons.Add(new InlineKeyboardButton { text = $"{dt.Day}-{dt.Month}", callback_data = $"{CbqOtherDateSelected}:{i}" });
+            }
+
+            InlineKeyboardMarkup result = new InlineKeyboardMarkup();
+            result.inline_keyboard = SplitButtonsIntoLines(buttons, maxElementsPerLine: 5, maxCharactersPerLine: 30);
+            return result;
+        }
+
+        private InlineKeyboardMarkup CreateTimeMenu(int daysFromNow)
+        {
+            List<InlineKeyboardButton> buttons = new List<InlineKeyboardButton>();
+            for (int i = 0; i < 24; i++)
+            {
+                buttons.Add(new InlineKeyboardButton { text = $"{i}:00", callback_data = $"{CbqOtherDateTimeSelected}:{daysFromNow}:{i}" });
             }
 
             InlineKeyboardMarkup result = new InlineKeyboardMarkup();

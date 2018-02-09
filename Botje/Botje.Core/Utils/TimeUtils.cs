@@ -40,6 +40,16 @@ namespace Botje.Core.Utils
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="localTime"></param>
+        /// <returns></returns>
+        public static DateTime ToUTC(DateTime localTime)
+        {
+            return TimeZoneInfo.ConvertTimeToUtc(localTime, _tzInfo);
+        }
+
+        /// <summary>
         /// Convert a datetime to justa short time.
         /// </summary>
         /// <param name="utc"></param>
