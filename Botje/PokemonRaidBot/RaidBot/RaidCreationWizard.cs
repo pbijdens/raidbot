@@ -12,6 +12,7 @@ using PokemonRaidBot.RaidBot.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 
 namespace PokemonRaidBot.RaidBot
@@ -188,7 +189,11 @@ namespace PokemonRaidBot.RaidBot
 
         private void Client_OnPrivateMessage(object sender, PrivateMessageEventArgs e)
         {
-            if (e.Message.Location != null) // getting a location message, update the current raid
+            if (e.Message.Type == MessageType.Document && (e.Message.Document?.Filename ?? "").ToLower().EndsWith(".json"))
+            {
+                ProcessJsonDocument(e);
+            }
+            else if (e.Message.Location != null) // getting a location message, update the current raid
             {
                 UpdateLocation(e.Message.From, e.Message.Location);
                 ShowMenu(e.Message.From);
@@ -231,6 +236,57 @@ namespace PokemonRaidBot.RaidBot
                             break;
                     }
                 }
+            }
+        }
+
+        public class JSONRequest
+        {
+            public double Latitude { get; set; }
+            public double Longitude { get; set; }
+            public string Gym { get; set; }
+            public Team GymAlignment { get; set; }
+            public string RaidBoss { get; set; }
+            public DateTimeOffset RaidEndTime { get; set; }
+        }
+
+        private void ProcessJsonDocument(PrivateMessageEventArgs e)
+        {
+            ResetConversation(e.Message.From);
+            var doc = e.Message.Document;
+            Client.SendMessageToChat(e.Message.From.ID, $"JSON: {MessageUtils.HtmlEscape(doc.Filename)} / {doc.FileSize} byte(s) / mime type {doc.MimeType}!", "HTML", true, null, e.Message.MessageID);
+
+            try
+            {
+                File file = Client.GetFile(doc.FileID);
+                var client = new WebClient();
+                string jsonText = client.DownloadString($"{Client.FileBaseURL}/{file.FilePath}");
+
+                JSONRequest request = Newtonsoft.Json.JsonConvert.DeserializeObject<JSONRequest>(jsonText);
+
+                var user = e.Message.From;
+                GetOrCreateRaidDescriptionForUser(user, out DbSet<RaidDescription> collection, out RaidDescription record);
+                if (!String.IsNullOrWhiteSpace(request.Gym)) record.Gym = request.Gym;
+                if (!String.IsNullOrWhiteSpace(request.RaidBoss)) record.Raid = request.RaidBoss;
+                record.Alignment = request.GymAlignment;
+                record.RaidEndTime = request.RaidEndTime.UtcDateTime;
+                record.RaidUnlockTime = record.RaidEndTime - TimeSpan.FromMinutes(RaidDurationInMinutes);
+                if (request.Latitude != 0 && !double.IsNaN(request.Latitude))
+                {
+                    record.Location = new Location { Latitude = (float)request.Latitude, Longitude = (float)request.Longitude };
+                    collection.Update(record);
+                    UpdateAddress(user, record.Location);
+                }
+                else
+                {
+                    collection.Update(record);
+                }
+
+                ShowMenu(e.Message.From);
+            }
+            catch (Exception ex)
+            {
+                var msg = ExceptionUtils.AsString(ex);
+                Client.SendMessageToChat(e.Message.From.ID, $"<pre>{MessageUtils.HtmlEscape(msg)}</pre>", "HTML");
             }
         }
 

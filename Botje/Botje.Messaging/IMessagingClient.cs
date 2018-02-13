@@ -113,6 +113,24 @@ namespace Botje.Messaging
         /// <param name="results"></param>
         void AnswerInlineQuery(string queryID, List<InlineQueryResultArticle> results);
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="chatID"></param>
+        /// <param name="sourceChat"></param>
+        /// <param name="sourceMessageID"></param>
         void ForwardMessageToChat(long chatID, long sourceChat, long sourceMessageID);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="fileID"></param>
+        /// <returns></returns>
+        File GetFile(string fileID);
+
+        /// <summary>
+        /// Gets the host/key combination.
+        /// </summary>
+        string FileBaseURL { get; }
     }
 }

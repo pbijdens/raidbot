@@ -50,10 +50,12 @@ namespace Botje.Messaging.Telegram
         private CancellationToken _cancellationToken;
         protected ILogger Log;
         private RestClient _restClient;
+        public String FileBaseURL { get; private set; }
 
         public virtual void Setup(string key, CancellationToken cancellationToken)
         {
             _cancellationToken = cancellationToken;
+            FileBaseURL = $"https://api.telegram.org/file/bot{key}";
             _restClient = new RestClient($"https://api.telegram.org/bot{key}");
         }
 
@@ -535,6 +537,54 @@ namespace Botje.Messaging.Telegram
                 throw new TimeoutException(error);
             }
             sw.Stop();
+        }
+
+        private class GetFileParams
+        {
+            public string file_id { get; set; }
+        }
+
+        public virtual File GetFile(string fileID)
+        {
+            Log.Trace($"Invoked: GetFile(fileID={fileID})");
+
+            File result = null;
+
+            var request = new RestRequest("getFile", Method.POST);
+
+            var parameters = new GetFileParams
+            {
+                file_id = fileID,
+            };
+            var jsonParams = Newtonsoft.Json.JsonConvert.SerializeObject(parameters, new Newtonsoft.Json.JsonSerializerSettings { NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore });
+            request.AddParameter("application/json; charset=utf-8", jsonParams, ParameterType.RequestBody);
+            request.RequestFormat = DataFormat.Json;
+
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+            Semaphore sem = new Semaphore(0, 1);
+            _restClient.ExecuteAsync<Result<File>>(request, (restResult) =>
+            {
+                if (restResult.Data.OK)
+                {
+                    result = restResult.Data.Data;
+                    Log.Trace($"{request.Resource}/{request.Method} returned in {sw.ElapsedMilliseconds} milliseconds");
+                }
+                else
+                {
+                    Log.Error($"Error in '{request.Resource}/{request.Method}': Code: \"{restResult.Data.ErrorCode}\" Description: \"{restResult.Data.Description}\"");
+                }
+                sem.Release();
+            }
+            );
+            if (!sem.WaitOne(SendMessageToChatTimeout))
+            {
+                string error = $"Timeout waiting for {request.Resource}/{request.Method} after {sw.ElapsedMilliseconds} milliseconds.";
+                Log.Error(error);
+                throw new TimeoutException(error);
+            }
+            sw.Stop();
+            return result;
         }
     }
 }
