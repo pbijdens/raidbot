@@ -446,8 +446,9 @@ namespace PokemonRaidBot.RaidBot
             return sb.ToString();
         }
 
-        private static void CalculateParticipationBlock(RaidParticipation raid, StringBuilder sb, out string tps)
+        private void CalculateParticipationBlock(RaidParticipation raid, StringBuilder sb, out string tps)
         {
+            var userSettingsCollection = DB.GetCollection<UserSettings>();
             List<string> tpsElements = new List<string>();
             tps = "";
             int counter = 0;
@@ -460,7 +461,13 @@ namespace PokemonRaidBot.RaidBot
                     sb.AppendLine($"<b>{team.AsReadableString()} ({participants.Select(x => 1 + x.Extra).Sum()}):</b>");
                     foreach (var p in participants.OrderBy(x => x.User.ShortName()))
                     {
-                        sb.Append($"  - {MessageUtils.HtmlEscape(p.User.ShortName().TrimStart('@'))}");
+                        string name = p.User.ShortName().TrimStart('@');
+                        var userRecord = userSettingsCollection.Find(x => x.User.ID == p.User.ID).FirstOrDefault();
+                        if (!string.IsNullOrWhiteSpace(userRecord?.Alias))
+                        {
+                            name = userRecord.Alias;
+                        }
+                        sb.Append($"  - {MessageUtils.HtmlEscape(name)}");
 
                         if (p.Extra > 0)
                         {

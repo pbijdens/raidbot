@@ -35,8 +35,8 @@ namespace PokemonRaidBot.RaidBot
         private const string StateReadGym = "RCW-READ-GYM";
         private const string StateReadPokemon = "RCW-READ-RAID";
 
-        private const int RaidDurationInMinutes = 45;
-        private const int EggDurationInMinutes = 60;
+        public const int RaidDurationInMinutes = 45;
+        public const int EggDurationInMinutes = 60;
 
         private ILogger _log;
         private RaidEventHandler _eventHandler;
@@ -456,7 +456,7 @@ namespace PokemonRaidBot.RaidBot
             {
                 buttons.Add(new InlineKeyboardButton { text = $"🥚: {i}m", callback_data = $"{CbqTimeSelected}:{i + RaidDurationInMinutes}" });
             }
-            for (int i = 0; i <= 45; i += 5)
+            for (int i = 0; i <= RaidDurationInMinutes; i += 5)
             {
                 buttons.Add(new InlineKeyboardButton { text = $"⛔️: {i}m", callback_data = $"{CbqTimeSelected}:{i}" });
             }

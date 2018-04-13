@@ -35,7 +35,7 @@ namespace PokemonRaidBot
 
             // Core services
             var database = kernel.Get<Database>();
-            database.Setup("Data");
+            database.Setup(settings.DataFolder);
             kernel.Bind<IDatabase>().ToConstant(database);
             kernel.Bind<IPrivateConversationManager>().To<PrivateConversationManager>().InSingletonScope();
 
@@ -52,6 +52,8 @@ namespace PokemonRaidBot
 
             // Set up the console commands
             var helpCommand = new HelpCommand();
+            kernel.Bind<IConsoleCommand>().ToConstant(new ListCommand { }).InSingletonScope();
+            kernel.Bind<IConsoleCommand>().ToConstant(new UpdateCommand { }).InSingletonScope();
             kernel.Bind<IConsoleCommand>().ToConstant(new ExitCommand { TokenSource = source }).InSingletonScope();
             kernel.Bind<IConsoleCommand>().To<PingCommand>().InSingletonScope();
             kernel.Bind<IConsoleCommand>().To<HelpCommand>().InSingletonScope();
@@ -63,6 +65,7 @@ namespace PokemonRaidBot
             kernel.Bind<IBotModule>().To<RaidBot.RaidEventHandler>().InSingletonScope();
             kernel.Bind<IBotModule>().To<RaidBot.WhereAmI>().InSingletonScope();
             kernel.Bind<IBotModule>().To<RaidBot.RaidStatistics>().InSingletonScope();
+            kernel.Bind<IBotModule>().To<RaidBot.Alias>().InSingletonScope();
 
             var modules = kernel.GetAll<IBotModule>().ToList();
 

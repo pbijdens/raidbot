@@ -15,6 +15,7 @@ namespace PokemonRaidBot
             public List<string> AdministratorUsernames { get; set; }
             public long? PublicationChannel { get; set; }
             public string GoogleLocationAPIKey { get; set; }
+            public string DataFolder { get; set; }
         }
 
         private Settings _settings;
@@ -28,6 +29,8 @@ namespace PokemonRaidBot
         public long? PublicationChannel => _settings.PublicationChannel;
 
         public string GoogleLocationAPIKey => _settings.GoogleLocationAPIKey;
+
+        public string DataFolder => _settings.DataFolder;
 
         public void Read(string filename, string fallback)
         {
