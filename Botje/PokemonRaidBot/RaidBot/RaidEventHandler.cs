@@ -442,6 +442,7 @@ namespace PokemonRaidBot.RaidBot
                 var str = string.Join(", ", naySayers.Select(x => $"{x.ShortName()}"));
                 sb.AppendLine($"<b>Afgemeld:</b> {str}");
             }
+            sb.AppendLine($"\r\n<i>Gebruik in een privé chat met de bot het /level commando om je spelers level in te stellen.</i>");
             sb.AppendLine($"\r\n#raid updated: <i>{DateTime.UtcNow.AsFullTime()}</i>");
             return sb.ToString();
         }
