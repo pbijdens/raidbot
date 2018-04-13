@@ -13,5 +13,7 @@ namespace PokemonRaidBot.RaidBot.Entities
         public Team Team { get; set; }
 
         public string Alias { get; set; }
+
+        public int Level { get; set; }
     }
 }

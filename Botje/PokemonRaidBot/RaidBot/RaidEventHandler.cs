@@ -467,6 +467,10 @@ namespace PokemonRaidBot.RaidBot
                         {
                             name = userRecord.Alias;
                         }
+                        if (userRecord?.Level > 0)
+                        {
+                            name += $" (level {userRecord?.Level})";
+                        }
                         sb.Append($"  - {MessageUtils.HtmlEscape(name)}");
 
                         if (p.Extra > 0)
