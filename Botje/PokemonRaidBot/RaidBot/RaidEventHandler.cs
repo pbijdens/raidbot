@@ -356,7 +356,7 @@ namespace PokemonRaidBot.RaidBot
             var raid = raidCollection.Find(x => x.PublicID == raidID).FirstOrDefault();
             if (null == raid)
             {
-                _log.Error($"Got update request for raid {raidID}, but I cánt find it");
+                _log.Error($"Got update request for raid {raidID}, but I can't find it");
                 return;
             }
 
