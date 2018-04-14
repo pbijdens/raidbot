@@ -62,6 +62,8 @@ namespace PokemonRaidBot.RaidBot
         {
             if (e.Query.Query.StartsWith(IqPrefix))
             {
+                _log.Info($"Inline query from {e.Query.From.DisplayName()} ({e.Query.From.ID}) for query {e.Query.Query}");
+
                 e.Query.Query = e.Query.Query.TrimEnd('@');
                 string raidID = e.Query.Query.Substring(IqPrefix.Length);
                 var raidCollection = DB.GetCollection<RaidParticipation>();
@@ -394,7 +396,12 @@ namespace PokemonRaidBot.RaidBot
             CalculateParticipationBlock(raid, participationSB, out string tps);
 
             StringBuilder sb = new StringBuilder();
+
             sb.AppendLine($"<b>Ingeschreven:</b> {tps}");
+            if (!string.IsNullOrWhiteSpace(raid.Raid.Remarks))
+            {
+                sb.AppendLine($"<b>Opmerkingen:</b> {MessageUtils.HtmlEscape(raid.Raid.Remarks)}");
+            }
             if (!string.IsNullOrWhiteSpace(raid.Raid.Raid))
             {
                 sb.AppendLine($"<b>Raid:</b> {MessageUtils.HtmlEscape(raid.Raid.Raid)}");
@@ -442,7 +449,13 @@ namespace PokemonRaidBot.RaidBot
                 var str = string.Join(", ", naySayers.Select(x => $"{x.ShortName()}"));
                 sb.AppendLine($"<b>Afgemeld:</b> {str}");
             }
-            sb.AppendLine($"\r\n<i>Gebruik in een privé chat met de bot het /level commando om je spelers level in te stellen.</i>");
+            sb.AppendLine($"\r\n<i>Gebruik in een privé chat met de bot het commando /level om je level in te stellen.</i>");
+
+            if (!raid.IsPublished)
+            {
+                sb.AppendLine($"\r\n⛔️ <b>Deze raid is nog niet gepubliceerd naar het raid-kanaal. Druk op '📣 Publiceren' om dit alsnog te doen.</b>");
+            }
+
             sb.AppendLine($"\r\n#raid updated: <i>{DateTime.UtcNow.AsFullTime()}</i>");
             return sb.ToString();
         }

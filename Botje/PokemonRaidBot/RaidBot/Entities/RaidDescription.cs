@@ -37,5 +37,8 @@ namespace PokemonRaidBot.RaidBot.Entities
 
         // number of updates to this structure
         public int UpdateCount { get; set; }
+
+        // Remarks for this raid, could be ex-raid trigger or anything else
+        public string Remarks { get; set; }
     }
 }
