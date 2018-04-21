@@ -101,23 +101,23 @@ namespace PokemonRaidBot.RaidBot
             switch (command)
             {
                 case QrArrived: // :raid
-                    _log.Info($"{e.CallbackQuery.From.DisplayName()} has arrived for raid {args[0]}");
+                    _log.Trace($"{e.CallbackQuery.From.DisplayName()} has arrived for raid {args[0]}");
                     Client.AnswerCallbackQuery(e.CallbackQuery.ID, $"Je bent er! Geweldig!");
                     UpdateUserRaidJoinOrUpdateAttendance(e.CallbackQuery.From, args[0]);
                     UpdateUserRaidArrived(e.CallbackQuery.From, args[0]);
                     UpdateRaidMessage(e.CallbackQuery.Message?.Chat?.ID, e.CallbackQuery.Message?.MessageID, e.CallbackQuery.InlineMessageId, args[0], e.CallbackQuery.Message?.Chat?.Type);
                     break;
                 case QrDecline: // :raid
-                    _log.Info($"{e.CallbackQuery.From.DisplayName()} has declined for raid {args[0]}");
+                    _log.Trace($"{e.CallbackQuery.From.DisplayName()} has declined for raid {args[0]}");
                     Client.AnswerCallbackQuery(e.CallbackQuery.ID, $"Jammer 😞");
                     UpdateUserRaidNegative(e.CallbackQuery.From, args[0]);
                     UpdateRaidMessage(e.CallbackQuery.Message?.Chat?.ID, e.CallbackQuery.Message?.MessageID, e.CallbackQuery.InlineMessageId, args[0], e.CallbackQuery.Message?.Chat?.Type);
                     break;
                 case QrJoin: // :raid:extra:team
-                    _log.Info($"{e.CallbackQuery.From.DisplayName()} will join raid {args[0]} [{e.CallbackQuery.Data}]");
+                    _log.Trace($"{e.CallbackQuery.From.DisplayName()} will join raid {args[0]} [{e.CallbackQuery.Data}]");
                     if (args.Length >= 3 && int.TryParse(args[2], out int teamID) && teamID >= (int)Team.Unknown && teamID <= (int)Team.Instinct)
                     {
-                        _log.Info($"{e.CallbackQuery.From.DisplayName()} joined team {((Team)teamID).AsReadableString()}");
+                        _log.Trace($"{e.CallbackQuery.From.DisplayName()} joined team {((Team)teamID).AsReadableString()}");
                         Client.AnswerCallbackQuery(e.CallbackQuery.ID, $"Ingeschreven voor voor team {((Team)teamID).AsReadableString()}");
                         UpdateUserSettingsForTeam(e.CallbackQuery.From, (Team)teamID);
                     }
@@ -141,7 +141,7 @@ namespace PokemonRaidBot.RaidBot
                     UpdateRaidMessage(e.CallbackQuery.Message?.Chat?.ID, e.CallbackQuery.Message?.MessageID, e.CallbackQuery.InlineMessageId, args[0], e.CallbackQuery.Message?.Chat?.Type);
                     break;
                 case QrRefresh: // :raid
-                    _log.Info($"{e.CallbackQuery.From.DisplayName()} refreshed {args[0]}");
+                    _log.Trace($"{e.CallbackQuery.From.DisplayName()} refreshed {args[0]}");
                     Client.AnswerCallbackQuery(e.CallbackQuery.ID, $"Raid informatie wordt ververst...");
                     UpdateRaidMessage(e.CallbackQuery.Message?.Chat?.ID, e.CallbackQuery.Message?.MessageID, e.CallbackQuery.InlineMessageId, args[0], e.CallbackQuery.Message?.Chat?.Type);
                     break;
@@ -150,7 +150,7 @@ namespace PokemonRaidBot.RaidBot
                     if (long.TryParse(args[1], out long ticks))
                     {
                         var utcWhen = new DateTime(ticks);
-                        _log.Info($"{e.CallbackQuery.From.DisplayName()} updated their time for raid {args[0]} to {TimeUtils.AsShortTime(utcWhen)}");
+                        _log.Trace($"{e.CallbackQuery.From.DisplayName()} updated their time for raid {args[0]} to {TimeUtils.AsShortTime(utcWhen)}");
                         Client.AnswerCallbackQuery(e.CallbackQuery.ID, $"Je bent er om {TimeUtils.AsShortTime(utcWhen)}.");
                         UpdateUserRaidTime(e.CallbackQuery.From, args[0], utcWhen);
                     }
@@ -161,7 +161,7 @@ namespace PokemonRaidBot.RaidBot
                     UpdateRaidMessage(e.CallbackQuery.Message?.Chat?.ID, e.CallbackQuery.Message?.MessageID, e.CallbackQuery.InlineMessageId, args[0], e.CallbackQuery.Message?.Chat?.Type);
                     break;
                 case QrSetAlignment: // :{raid}
-                    _log.Info($"{e.CallbackQuery.From.DisplayName()} wants to change the gym alignment {args[0]}");
+                    _log.Trace($"{e.CallbackQuery.From.DisplayName()} wants to change the gym alignment {args[0]}");
                     Client.AnswerCallbackQuery(e.CallbackQuery.ID, $"Pas de kleur aan in je privé-chat met de bot.");
                     try
                     {
