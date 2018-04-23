@@ -348,7 +348,9 @@ namespace PokemonRaidBot.RaidBot
                 raid.IsPublished = true;
                 raidCollection.Update(raid);
 
-                ShareRaidToChat(raid, Settings.PublicationChannel.Value);
+                var message = ShareRaidToChat(raid, Settings.PublicationChannel.Value);
+                raid.Raid.TelegramMessageID = message.MessageID;
+                raidCollection.Update(raid);
             }
         }
 
@@ -383,11 +385,12 @@ namespace PokemonRaidBot.RaidBot
             ShareRaidToChat(raid, from.ID);
         }
 
-        private void ShareRaidToChat(RaidParticipation raid, long chatID)
+        private Message ShareRaidToChat(RaidParticipation raid, long chatID)
         {
             string text = CreateRaidText(raid);
             InlineKeyboardMarkup markup = CreateMarkupFor(raid);
-            Client.SendMessageToChat(chatID, text, "HTML", true, true, null, markup);
+            var message = Client.SendMessageToChat(chatID, text, "HTML", true, true, null, markup);
+            return message;
         }
 
         private string CreateRaidText(RaidParticipation raid)

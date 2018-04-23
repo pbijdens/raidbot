@@ -40,5 +40,8 @@ namespace PokemonRaidBot.RaidBot.Entities
 
         // Remarks for this raid, could be ex-raid trigger or anything else
         public string Remarks { get; set; }
+
+        // Message ID of the message containing the raid information. Used to automatically delete the raid message from the channel when it expires.
+        public long? TelegramMessageID { get; set; }
     }
 }

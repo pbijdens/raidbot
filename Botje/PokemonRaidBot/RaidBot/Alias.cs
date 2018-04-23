@@ -44,15 +44,6 @@ namespace PokemonRaidBot.RaidBot
 
             string command = GetCommandFromMessage(e.Message, out string argstr, out string[] args);
             ProcessCommand(e.Message, command, argstr, args);
-            //var firstEntity = e.Message?.Entities?.FirstOrDefault();
-            //if (null != firstEntity && firstEntity.Type == "bot_command" && firstEntity.Offset == 0)
-            //{
-            //    string commandText = e.Message.Text.Substring(firstEntity.Offset, firstEntity.Length);
-            //    if (commandText == "/alias")
-            //    {
-            //        var userSetting = GetOrCreateUserSettings(e.Message.From, out DbSet<UserSettings> dbSetUserSettings);
-            //    }
-            //}
         }
 
         private void ProcessCommand(Message message, string command, string argstr, string[] args)
