@@ -1,0 +1,520 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-04-29 17:13+0200\n"
+"PO-Revision-Date: 2018-04-29 17:13+0200\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: nl_NL\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.0.7\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: ChatCommands/Alias.cs:43
+#, csharp-format
+msgid ""
+"Your alias in the subscriptions now is '{0}'. Remove the alias using the '/"
+"alias -' command."
+msgstr ""
+"Je staat nu als '{0}' in de inschrijvingen. Verwijder je alias met het "
+"commando '/alias -'."
+
+#: ChatCommands/Alias.cs:48
+#, csharp-format
+msgid "Your regular username of '{0}' will be used in the subscription list."
+msgstr ""
+"Je reguliere gebruikersnaam '{0}' wordt nu gebruikt in de inschrijvingen."
+
+#: ChatCommands/Level.cs:43
+#, csharp-format
+msgid ""
+"Your Pokémon Go trainer level now is {0}.\n"
+"Use '/level 0' to remove your level."
+msgstr ""
+"Je Pokémon Go trainer level is nu {0}.\n"
+"Gebruik het commando '/level 0' om je level te wissen."
+
+#: ChatCommands/Level.cs:48
+msgid ""
+"Your Pokémon Go trainer level is currently not shown.\n"
+"Use '/level [yourlevel]' to set your level."
+msgstr ""
+"Je Pokémon Go trainer level wordt niet getoond.\n"
+"Gebruik '/level [jouwlevel]' om je level in te stellen in de bot."
+
+#: ChatCommands/RaidStatistics.cs:45
+msgid ""
+"Use '/gyminfo \"<regex>\"' to obtain statistics about all raids on matching "
+"gyms."
+msgstr ""
+"Gebruik '/gyminfo \"<regex>\"' om statistieken te bekijken voor alle raids "
+"op die gym."
+
+#: ChatCommands/RaidStatistics.cs:53
+#, csharp-format
+msgid "Statistics for \"{0}\""
+msgstr "Statstieken voor \"{0}\""
+
+#: ChatCommands/RaidStatistics.cs:68
+msgid "Too many results."
+msgstr "Te veel resultaten."
+
+#: ChatCommands/RaidStatistics.cs:77
+#, csharp-format
+msgid ""
+"An error occurred processing statistics for \"{0}\" (is that even a regular "
+"expression?): {1}"
+msgstr ""
+"Er is een probleem opgetreden bij het verwerken van '{0}' (is dat überhaupt "
+"een regex?): {1}"
+
+#: Modules/RaidCreationWizard.cs:94
+msgid "Enter the name of the gym."
+msgstr "Voer de naam van de gym in."
+
+#: Modules/RaidCreationWizard.cs:99
+msgid "Enter the name of the Pokémon."
+msgstr "Voer de naam van de Pokémon in."
+
+#: Modules/RaidCreationWizard.cs:103
+msgid "Specify the current gym's alignment."
+msgstr "Geef aan welke kleur de gym op dit moment heeft."
+
+#: Modules/RaidCreationWizard.cs:106
+msgid "Updated the gym alignment."
+msgstr "Gym kleur aangepast."
+
+#: Modules/RaidCreationWizard.cs:113
+msgid ""
+"Please specify when the raid will take place. If the egg is yet to hatch, "
+"use one of the 🥚 buttons to indicate the amount of time left before the egg "
+"hatches. If the egg already hatched use one of the ⛔️ to indicate how many "
+"minutes are left for the raid."
+msgstr ""
+"Geef aan wanneer deze raid gedaan kan worden. Als het ei nog moet uitkomen, "
+"geef dan met een van de 🥚 knoppen aan over hoeveel minuten het ei uitkomt. "
+"Is het ei al uit, geef dan met een van de ⛔️ knoppen aan hoeveel minuten de "
+"raid nog duurt."
+
+#: Modules/RaidCreationWizard.cs:116 Modules/RaidCreationWizard.cs:130
+msgid "Raid time updated."
+msgstr "Raid tijd is aangepast."
+
+#: Modules/RaidCreationWizard.cs:123
+msgid "Select a date for this raid from the list below."
+msgstr "Kies aan datum uit de lijst."
+
+#: Modules/RaidCreationWizard.cs:127
+msgid "Select a start time."
+msgstr "Kies een start-tijd."
+
+#: Modules/RaidCreationWizard.cs:135
+msgid "Cleared."
+msgstr "Gewist."
+
+#: Modules/RaidCreationWizard.cs:140
+msgid ""
+"The raid was created but not published yet. You can publish or share the "
+"raid with the corresponding buttons in the block."
+msgstr ""
+"De raid is aangemaakt, maar nog niet gepubliceerd. Om de raid te dele of "
+"publiceren gebruik je nu de bijbehorende knop."
+
+#: Modules/RaidCreationWizard.cs:144
+msgid "If you say so."
+msgstr "Als jij het zegt."
+
+#: Modules/RaidCreationWizard.cs:149
+#, csharp-format
+msgid "Your new team is {0}."
+msgstr "Je nieuwe team is {0}."
+
+#: Modules/RaidCreationWizard.cs:176
+msgid ""
+"Please specify which Pokémon the raid is for. If unknown, just enter the "
+"level of the raid."
+msgstr "Geef op zijn minst aan voor welke Pokémon de raid is."
+
+#: Modules/RaidCreationWizard.cs:181
+msgid "Please specify the name of the gym."
+msgstr "Voer de naam van de gym in."
+
+#: Modules/RaidCreationWizard.cs:186 Modules/RaidCreationWizard.cs:416
+msgid ""
+"Please specify the gym's location. You can send a location from the telegram "
+"mobile client by pressing the paperclip button and selecting Location. Then "
+"drag the map so the position marker is at the location of the gym. The "
+"address information will automatically be added by the bot."
+msgstr ""
+"Waar is de raid? Je kan je locatie sturen door in de mobiele Telegram "
+"applicatie op de paperclip te klikken, en Locatie te kiezen. Versleep voor "
+"je de locatie stuurt de kaart zodat de locatie-marker op de plek van de gym "
+"staat. Adres-informatie wordt automatisch toegevoegd."
+
+#: Modules/RaidCreationWizard.cs:191
+msgid "Please specify when the raid will take place."
+msgstr "Voer de naam van de gym in."
+
+#: Modules/RaidCreationWizard.cs:228
+msgid "Pick your team from the list."
+msgstr "Kies je team uit de lijst."
+
+#: Modules/RaidCreationWizard.cs:232
+msgid ""
+"Send a location from the telegram mobile client by pressing the paperclip "
+"button and selecting Location. Then drag the map so the position marker is "
+"at the location of the gym. The address information will automatically be "
+"added by the bot.\n"
+"After having sent the location, will out the remaining details.\n"
+"Finally, when you are ready, you can choose to either publish the raid to "
+"the public channel, or share your raid privately using the share-button."
+msgstr ""
+"Begin ermee om de locatie van de gym op te geven. Je kan een locatie sturen "
+"door in de mobiele Telegram applicatie op de paperclip te klikken, en "
+"Locatie te kiezen. Versleep voor je de locatie stuurt de kaart zodat de "
+"locatie-marker op de plek van de gym staat. Adres-informatie wordt "
+"automatisch toegevoegd.\n"
+"Nadat je de locatie hebt aangegeven kan je de andere gegevens van de raid "
+"aanpassen.\n"
+"Als je klaar bent klik je op de \"Klaar\" knop.\n"
+"Daarna kan je de raid publiceren naar het raid-kanaal, of de raid privé "
+"delen met de bijbehorende knoppen."
+
+#: Modules/RaidCreationWizard.cs:403 Modules/RaidCreationWizard.cs:543
+#: Modules/RaidEventHandler.cs:419
+msgid "Raid"
+msgstr "Raid"
+
+#: Modules/RaidCreationWizard.cs:404 Modules/RaidCreationWizard.cs:548
+#: Modules/RaidEventHandler.cs:423
+msgid "Gym"
+msgstr "Gym"
+
+#: Modules/RaidCreationWizard.cs:405 Modules/RaidCreationWizard.cs:553
+#: Modules/RaidEventHandler.cs:427
+msgid "Alignment"
+msgstr "Kleur"
+
+#: Modules/RaidCreationWizard.cs:406 Modules/RaidEventHandler.cs:431
+msgid "Address"
+msgstr "Adres"
+
+#: Modules/RaidCreationWizard.cs:407
+msgid "GPS Location"
+msgstr "GPS coördinaten"
+
+#: Modules/RaidCreationWizard.cs:409
+msgid "Available from"
+msgstr "Beschikbaar vanaf"
+
+#: Modules/RaidCreationWizard.cs:411
+msgid "Available until"
+msgstr "Beschikbaar tot"
+
+#: Modules/RaidCreationWizard.cs:475
+msgid "Other..."
+msgstr "Anders..."
+
+#: Modules/RaidCreationWizard.cs:561 Modules/RaidEventHandler.cs:448
+msgid "Time"
+msgstr "Tijd"
+
+#: Modules/RaidCreationWizard.cs:566
+msgid "🗑 Reset"
+msgstr "🗑 Wissen"
+
+#: Modules/RaidCreationWizard.cs:574
+msgid "💾 Done"
+msgstr "💾 Klaar"
+
+#: Modules/RaidEventHandler.cs:91
+#, csharp-format
+msgid "{0} raid at {1} {2}"
+msgstr "{0} raid bij {1} {2}"
+
+#: Modules/RaidEventHandler.cs:114
+msgid "Excellent! You arrived."
+msgstr "Geweldig! Je bent er."
+
+#: Modules/RaidEventHandler.cs:121
+msgid "That's too bad 😞"
+msgstr "Jammer 😞"
+
+#: Modules/RaidEventHandler.cs:130
+#, csharp-format
+msgid "Joined for team {0}"
+msgstr "Je nieuwe team is {0}."
+
+#: Modules/RaidEventHandler.cs:135
+msgid "You're on the list now."
+msgstr "Kies je team uit de lijst."
+
+#: Modules/RaidEventHandler.cs:148
+msgid "Publishing the raid."
+msgstr "Raid wordt gepubliceerd."
+
+#: Modules/RaidEventHandler.cs:154
+msgid "Refreshing..."
+msgstr "Bezig met verversen."
+
+#: Modules/RaidEventHandler.cs:163
+#, csharp-format
+msgid "You will be there at {0}."
+msgstr "Jebent er om {0}."
+
+#: Modules/RaidEventHandler.cs:168
+msgid "Error updating time."
+msgstr "Probleem bij het aanpassen van de tijd."
+
+#: Modules/RaidEventHandler.cs:174
+msgid "Go to our private chat to update the alignment."
+msgstr "Open je privé chat met de bot om de kleur aan te passen."
+
+#: Modules/RaidEventHandler.cs:177
+msgid "What's the current gym alignment?"
+msgstr "Geef aan welke kleur de gym op dit moment heeft."
+
+#: Modules/RaidEventHandler.cs:187
+msgid ""
+"Updated the gym alignment. Manual refresh of the published raid is required."
+msgstr "Gym kleur is aangepast. Ververs zelf even de gepubliceerde raid."
+
+#: Modules/RaidEventHandler.cs:188
+msgid "Thanks. Now please manually refresh the published message."
+msgstr "Bedankt. Ververs nu zelf even de gepubliceerde raid."
+
+#: Modules/RaidEventHandler.cs:412
+msgid "Subscribed"
+msgstr "Ingeschreven"
+
+#: Modules/RaidEventHandler.cs:415
+msgid "Remarks"
+msgstr "Opmerkingen"
+
+#: Modules/RaidEventHandler.cs:438
+msgid "Links"
+msgstr "Links"
+
+#: Modules/RaidEventHandler.cs:438
+msgid "route"
+msgstr "google maps"
+
+#: Modules/RaidEventHandler.cs:438
+msgid "portal map"
+msgstr "portal map"
+
+#: Modules/RaidEventHandler.cs:443
+msgid "Hatches in"
+msgstr "Komt uit over"
+
+#: Modules/RaidEventHandler.cs:452
+msgid "Ends"
+msgstr "Afgelopen om"
+
+#: Modules/RaidEventHandler.cs:452
+msgid "in"
+msgstr "over"
+
+#: Modules/RaidEventHandler.cs:462
+msgid "Declined"
+msgstr "Afgemeld"
+
+#: Modules/RaidEventHandler.cs:464
+msgid "In a private chat, use the /level command to set your player level."
+msgstr ""
+"Gebruik het /level commando in een privé chat met de bot om je level in te "
+"stellen."
+
+#: Modules/RaidEventHandler.cs:493
+msgid "level"
+msgstr "level"
+
+#: Modules/RaidEventHandler.cs:509
+#, csharp-format
+msgid "there for {0}"
+msgid_plural "there for {0}"
+msgstr[0] "is erl al {0}"
+msgstr[1] "zijn er al {0}"
+
+#: Modules/RaidEventHandler.cs:533
+msgid "Subscriptions"
+msgstr "Inschrijvingen"
+
+#: Modules/RaidEventHandler.cs:533
+#, csharp-format
+msgid "{0} player"
+msgid_plural "{0} players"
+msgstr[0] "{0} speler"
+msgstr[1] "{0} spelers"
+
+#: Modules/RaidEventHandler.cs:551
+msgid "Yes"
+msgstr "Ja!"
+
+#: Modules/RaidEventHandler.cs:552
+msgid "❤️"
+msgstr "❤️"
+
+#: Modules/RaidEventHandler.cs:553
+msgid "💙"
+msgstr "💙"
+
+#: Modules/RaidEventHandler.cs:554
+msgid "💛"
+msgstr "💛"
+
+#: Modules/RaidEventHandler.cs:555
+msgid "No"
+msgstr "Nee"
+
+#: Modules/RaidEventHandler.cs:559
+msgid "I +1"
+msgstr "Ik +1"
+
+#: Modules/RaidEventHandler.cs:560
+msgid "I +2"
+msgstr "Ik +2"
+
+#: Modules/RaidEventHandler.cs:561
+msgid "I +3"
+msgstr "Ik +3"
+
+#: Modules/RaidEventHandler.cs:562
+msgid "I +4"
+msgstr "Ik +4"
+
+#: Modules/RaidEventHandler.cs:563
+msgid "I +5"
+msgstr "Ik +5"
+
+#: Modules/RaidEventHandler.cs:567
+msgid "🔄"
+msgstr "🔄"
+
+#: Modules/RaidEventHandler.cs:568
+msgid "💟"
+msgstr "💟"
+
+#: Modules/RaidEventHandler.cs:569
+msgid "Share"
+msgstr "Delen"
+
+#: Modules/RaidEventHandler.cs:572
+msgid "📣 Publish"
+msgstr "📣 Publiceer"
+
+#: Modules/RaidEventHandler.cs:589
+msgid "Arrived"
+msgstr "Ben er"
+
+#: Utils/TimeService.cs:23
+msgid "HH:mm"
+msgstr "HH:mm"
+
+#: Utils/TimeService.cs:29
+msgid "HH:mm:ss.fff"
+msgstr "HH:mm:ss.fff"
+
+#: Utils/TimeService.cs:63
+msgid "January"
+msgstr "januari"
+
+#: Utils/TimeService.cs:64
+msgid "February"
+msgstr "februari"
+
+#: Utils/TimeService.cs:65
+msgid "March"
+msgstr "maart"
+
+#: Utils/TimeService.cs:66
+msgid "April"
+msgstr "april"
+
+#: Utils/TimeService.cs:67
+msgid "May"
+msgstr "mei"
+
+#: Utils/TimeService.cs:68
+msgid "June"
+msgstr "juni"
+
+#: Utils/TimeService.cs:69
+msgid "July"
+msgstr "juli"
+
+#: Utils/TimeService.cs:70
+msgid "August"
+msgstr "augustus"
+
+#: Utils/TimeService.cs:71
+msgid "September"
+msgstr "september"
+
+#: Utils/TimeService.cs:72
+msgid "October"
+msgstr "oktober"
+
+#: Utils/TimeService.cs:73
+msgid "November"
+msgstr "november"
+
+#: Utils/TimeService.cs:74
+msgid "December"
+msgstr "december"
+
+#: Utils/TimeService.cs:83
+msgid "MM-dd-yy HH:mm"
+msgstr "dd-MM-yy HH:mm"
+
+#: Utils/TimeService.cs:105
+msgid "seconds"
+msgstr "seconde"
+
+#: Utils/TimeService.cs:105
+msgid "second"
+msgstr "seconde"
+
+#: Utils/TimeService.cs:106
+msgid "minutes"
+msgstr "minuten"
+
+#: Utils/TimeService.cs:106
+msgid "minute"
+msgstr "minuut"
+
+#: Utils/TimeService.cs:107
+msgid "hours"
+msgstr "uur"
+
+#: Utils/TimeService.cs:107
+msgid "hour"
+msgstr "uur"
+
+#: Utils/TimeService.cs:108
+msgid "days"
+msgstr "dagen"
+
+#: Utils/TimeService.cs:108
+msgid "day"
+msgstr "dag"
+
+#~ msgid "maart"
+#~ msgstr "maart"
+
+#~ msgid "mei"
+#~ msgstr "mei"
+
+#~ msgid "juni"
+#~ msgstr "juni"
+
+#~ msgid "juli"
+#~ msgstr "juli"

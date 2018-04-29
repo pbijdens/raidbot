@@ -6,9 +6,12 @@ using Botje.DB;
 using Botje.Messaging;
 using Botje.Messaging.PrivateConversation;
 using Botje.Messaging.Telegram;
+using NGettext;
 using Ninject;
 using PokemonRaidBot.LocationAPI;
+using PokemonRaidBot.Utils;
 using System;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 
@@ -31,6 +34,19 @@ namespace PokemonRaidBot
             var kernel = new StandardKernel();
             kernel.Bind<ILoggerFactory>().To<ConsoleLoggerFactory>();
             kernel.Bind<ISettingsManager>().ToConstant(settings);
+
+            // I18N
+            ICatalog catalog;
+            if (string.IsNullOrEmpty(settings.Language))
+            {
+                catalog = new Catalog("raidbot", "i18n", new CultureInfo("en-US"));
+            }
+            else
+            {
+                catalog = new Catalog("raidbot", "i18n", new CultureInfo(settings.Language));
+            }
+            kernel.Bind<ICatalog>().ToConstant(catalog);
+            kernel.Bind<ITimeService>().To<TimeService>();
 
             // Core services
             var database = kernel.Get<Database>();

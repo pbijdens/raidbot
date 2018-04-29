@@ -5,10 +5,12 @@ using Botje.Messaging;
 using Botje.Messaging.Events;
 using Botje.Messaging.Models;
 using Botje.Messaging.PrivateConversation;
+using NGettext;
 using Ninject;
 using PokemonRaidBot.Entities;
 using PokemonRaidBot.LocationAPI;
 using PokemonRaidBot.RaidBot.Utils;
+using PokemonRaidBot.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,6 +42,14 @@ namespace PokemonRaidBot.Modules
 
         private ILogger _log;
         private RaidEventHandler _eventHandler;
+
+        [Inject]
+        public ITimeService TimeService { get; set; }
+
+        /// <summary></summary>
+        [Inject]
+        public ICatalog I18N { get; set; }
+        protected readonly Func<string, string> _HTML_ = (s) => MessageUtils.HtmlEscape(s);
 
         [Inject]
         public IMessagingClient Client { get; set; }
@@ -81,62 +91,63 @@ namespace PokemonRaidBot.Modules
                 case CbqGym:
                     Client.AnswerCallbackQuery(e.CallbackQuery.ID);
                     ConversationManager.SetState(e.CallbackQuery.From, StateReadGym);
-                    Client.SendMessageToChat(e.CallbackQuery.From.ID, $"Geef de naam van de gym op");
+                    Client.SendMessageToChat(e.CallbackQuery.From.ID, _HTML_(I18N.GetString("Enter the name of the gym.")));
                     break;
                 case CbqRaid:
                     Client.AnswerCallbackQuery(e.CallbackQuery.ID);
                     ConversationManager.SetState(e.CallbackQuery.From, StateReadPokemon);
-                    Client.SendMessageToChat(e.CallbackQuery.From.ID, $"Geef de naam van de Pokémon op");
+                    Client.SendMessageToChat(e.CallbackQuery.From.ID, _HTML_(I18N.GetString("Enter the name of the Pokémon.")));
                     break;
                 case CbqAlignment:
                     Client.AnswerCallbackQuery(e.CallbackQuery.ID);
-                    Client.SendMessageToChat(e.CallbackQuery.From.ID, $"Welke kleur heeft de gym op dit moment?", "HTML", true, true, null, CreateAlignmentMenu());
+                    Client.SendMessageToChat(e.CallbackQuery.From.ID, _HTML_(I18N.GetString("Specify the current gym's alignment.")), "HTML", true, true, null, CreateAlignmentMenu());
                     break;
                 case CbqAlignmentSelected:
-                    Client.AnswerCallbackQuery(e.CallbackQuery.ID, $"Kleur aangepast.");
+                    Client.AnswerCallbackQuery(e.CallbackQuery.ID, _HTML_(I18N.GetString("Updated the gym alignment.")));
                     var newValue = int.Parse(e.CallbackQuery.Data.Split(':')[1]);
                     UpdateAlignment(e.CallbackQuery.From, (Team)newValue);
                     ShowMenu(e.CallbackQuery.From);
                     break;
                 case CbqTime:
                     Client.AnswerCallbackQuery(e.CallbackQuery.ID);
-                    Client.SendMessageToChat(e.CallbackQuery.From.ID, $"Geef aan wanneer deze raid gedaan kan worden. Als het ei nog moet uitkomen, geef dan met een van de 🥚 knoppen aan over hoeveel minuten het ei uitkomt. Is het ei al uit, geef dan met een van de ⛔️ knoppen aan hoeveel minuten de raid nog duurt.", "HTML", true, true, null, CreateTimeMenu());
+                    Client.SendMessageToChat(e.CallbackQuery.From.ID, _HTML_(I18N.GetString("Please specify when the raid will take place. If the egg is yet to hatch, use one of the 🥚 buttons to indicate the amount of time left before the egg hatches. If the egg already hatched use one of the ⛔️ to indicate how many minutes are left for the raid.")), "HTML", true, true, null, CreateTimeMenu());
                     break;
                 case CbqTimeSelected:
-                    Client.AnswerCallbackQuery(e.CallbackQuery.ID, $"Tijd aangepast.");
+                    Client.AnswerCallbackQuery(e.CallbackQuery.ID, _HTML_(I18N.GetString("Raid time updated.")));
                     var minutesUntilRaidEnd = int.Parse(e.CallbackQuery.Data.Split(':')[1]);
                     UpdateTime(e.CallbackQuery.From, minutesUntilRaidEnd);
                     ShowMenu(e.CallbackQuery.From);
                     break;
                 case CbqManuallyEnterStartTime:
                     Client.AnswerCallbackQuery(e.CallbackQuery.ID);
-                    Client.SendMessageToChat(e.CallbackQuery.From.ID, $"Geef aan wanneer deze raid gedaan kan worden. Kies een datum uit de lijst.", "HTML", true, true, null, CreateDateMenu());
+                    Client.SendMessageToChat(e.CallbackQuery.From.ID, _HTML_(I18N.GetString("Select a date for this raid from the list below.")), "HTML", true, true, null, CreateDateMenu());
                     break;
                 case CbqOtherDateSelected:
                     Client.AnswerCallbackQuery(e.CallbackQuery.ID);
-                    Client.SendMessageToChat(e.CallbackQuery.From.ID, $"Kies een begin-tijd uit de lijst.", "HTML", true, true, null, CreateTimeMenu(int.Parse(e.CallbackQuery.Data.Split(':')[1])));
+                    Client.SendMessageToChat(e.CallbackQuery.From.ID, _HTML_(I18N.GetString("Select a start time.")), "HTML", true, true, null, CreateTimeMenu(int.Parse(e.CallbackQuery.Data.Split(':')[1])));
                     break;
                 case CbqOtherDateTimeSelected:
-                    Client.AnswerCallbackQuery(e.CallbackQuery.ID, $"Tijd aangepast.");
+                    Client.AnswerCallbackQuery(e.CallbackQuery.ID, _HTML_(I18N.GetString("Raid time updated.")));
                     UpdateTime(e.CallbackQuery.From, int.Parse(e.CallbackQuery.Data.Split(':')[1]), int.Parse(e.CallbackQuery.Data.Split(':')[2]));
                     ShowMenu(e.CallbackQuery.From);
                     break;
                 case CbqClear:
-                    Client.AnswerCallbackQuery(e.CallbackQuery.ID, $"Gewist.");
+                    Client.AnswerCallbackQuery(e.CallbackQuery.ID, _HTML_(I18N.GetString("Cleared.")));
                     ResetConversation(e.CallbackQuery.From);
                     ShowMenu(e.CallbackQuery.From);
                     break;
                 case CbqDone:
-                    Client.AnswerCallbackQuery(e.CallbackQuery.ID, $"Opgeslagen, deel nu de raid.");
+                    Client.AnswerCallbackQuery(e.CallbackQuery.ID, _HTML_(I18N.GetString("The raid was created but not published yet. You can publish or share the raid with the corresponding buttons in the block.")));
                     ProcessRaidDone(e);
                     break;
                 case CbqPlayerTeamSelected:
-                    Client.AnswerCallbackQuery(e.CallbackQuery.ID, $"Okee, als jij dat zegt.");
+                    Client.AnswerCallbackQuery(e.CallbackQuery.ID, _HTML_(I18N.GetString("If you say so.")));
                     var userSettings = GetOrCreateUserSettings(e.CallbackQuery.From, out var userSettingsCollection);
                     var team = (Team)(int.Parse(e.CallbackQuery.Data.Split(':')[1]));
                     userSettings.Team = team;
                     userSettingsCollection.Update(userSettings);
-                    Client.SendMessageToChat(e.CallbackQuery.From.ID, $"Je nieuwe teamkleur is {team.AsReadableString()}.", "HTML", true, true);
+                    string msg = I18N.GetString("Your new team is {0}.", _HTML_(team.AsReadableString()));
+                    Client.SendMessageToChat(e.CallbackQuery.From.ID, msg, "HTML", true, true);
                     break;
             }
         }
@@ -162,22 +173,22 @@ namespace PokemonRaidBot.Modules
             GetOrCreateRaidDescriptionForUser(e.CallbackQuery.From, out DbSet<RaidDescription> collection, out RaidDescription record);
             if (string.IsNullOrWhiteSpace(record.Raid))
             {
-                Client.SendMessageToChat(e.CallbackQuery.From.ID, $"Vertel op zijn minst om welke Pokémon het (vermoedelijk) gaat. Dat doe je door op de Pokémon knop te drukken.");
+                Client.SendMessageToChat(e.CallbackQuery.From.ID, _HTML_(I18N.GetString("Please specify which Pokémon the raid is for. If unknown, just enter the level of the raid.")));
                 ShowMenu(e.CallbackQuery.From);
             }
             else if (string.IsNullOrWhiteSpace(record.Gym))
             {
-                Client.SendMessageToChat(e.CallbackQuery.From.ID, $"De naam van de gym is niet ingevuld, dat is niet handig. Klik op de Gym button om een naam in te vullen.");
+                Client.SendMessageToChat(e.CallbackQuery.From.ID, _HTML_(I18N.GetString("Please specify the name of the gym.")));
                 ShowMenu(e.CallbackQuery.From);
             }
             else if (null == record.Location)
             {
-                Client.SendMessageToChat(e.CallbackQuery.From.ID, $"Je hebt geen locatie opgegeven voor de raid. Stuur me een locatie pin met je Telegram client. Je kan de kaart verslepen om de pin op de juiste plaats te zetten.");
+                Client.SendMessageToChat(e.CallbackQuery.From.ID, _HTML_(I18N.GetString("Please specify the gym's location. You can send a location from the telegram mobile client by pressing the paperclip button and selecting Location. Then drag the map so the position marker is at the location of the gym. The address information will automatically be added by the bot.")));
                 ShowMenu(e.CallbackQuery.From);
             }
             else if (record.RaidEndTime == default(DateTime) || record.RaidEndTime <= DateTime.UtcNow)
             {
-                Client.SendMessageToChat(e.CallbackQuery.From.ID, $"Je hebt nog geen tijd opgegeven, of de eerder opgegeven tijd is inmiddels verstreken. Geef een nieuwe starttijd op door op de Tijd knop te drukken.");
+                Client.SendMessageToChat(e.CallbackQuery.From.ID, _HTML_(I18N.GetString("Please specify when the raid will take place.")));
                 ShowMenu(e.CallbackQuery.From);
             }
             else
@@ -214,11 +225,11 @@ namespace PokemonRaidBot.Modules
                     if (commandText == "/team")
                     {
                         ResetConversation(e.Message.From);
-                        Client.SendMessageToChat(e.Message.From.ID, $"Kies jouw team-kleur uit de lijst.", "HTML", true, true, null, CreateTeamMenu());
+                        Client.SendMessageToChat(e.Message.From.ID, _HTML_(I18N.GetString("Pick your team from the list.")), "HTML", true, true, null, CreateTeamMenu());
                     }
                     if (commandText == "/help")
                     {
-                        Client.SendMessageToChat(e.Message.From.ID, $"Stuur een locatie-bericht of gebruik /start om een nieuwe raid aan te maken. Als alle informatie ingevuld is, druk je op 'Klaar' om het bericht klaar te zetten. Daarna kan je met de knop 'Delen' de raid privé of in een groep delen. Met de knop Publiceren kan de raid eenmalig in het raid-kanaal gepubliceerd worden.", "HTML");
+                        Client.SendMessageToChat(e.Message.From.ID, _HTML_(I18N.GetString("Send a location from the telegram mobile client by pressing the paperclip button and selecting Location. Then drag the map so the position marker is at the location of the gym. The address information will automatically be added by the bot.\nAfter having sent the location, will out the remaining details.\nFinally, when you are ready, you can choose to either publish the raid to the public channel, or share your raid privately using the share-button.")), "HTML");
                     }
                 }
                 else
@@ -389,19 +400,20 @@ namespace PokemonRaidBot.Modules
             GetOrCreateRaidDescriptionForUser(user, out DbSet<RaidDescription> collection, out RaidDescription record);
 
             StringBuilder text = new StringBuilder();
-            text.AppendLine($"<b>Raid</b>: {record.Raid}");
-            text.AppendLine($"<b>Gym</b>: {record.Gym}");
-            text.AppendLine($"<b>Kleur</b>: {record.Alignment.AsReadableString()}");
-            text.AppendLine($"<b>Adres</b>: {record.Address}");
-            text.AppendLine($"<b>GPS coördinaten</b>: lat={record.Location?.Latitude} lon={record.Location?.Longitude}");
+            text.AppendLine($"<b>" + _HTML_(I18N.GetString("Raid")) + $"</b>: {record.Raid}");
+            text.AppendLine($"<b>" + _HTML_(I18N.GetString("Gym")) + $"</b>: {record.Gym}");
+            text.AppendLine($"<b>" + _HTML_(I18N.GetString("Alignment")) + $"</b>: {record.Alignment.AsReadableString()}");
+            text.AppendLine($"<b>" + _HTML_(I18N.GetString("Address")) + $"</b>: {record.Address}");
+            text.AppendLine($"<b>" + _HTML_(I18N.GetString("GPS Location")) + $"</b>: lat={record.Location?.Latitude} lon={record.Location?.Longitude}");
             if (record.RaidUnlockTime != default(DateTime))
-                text.AppendLine($"<b>Beschikbaar om</b>: {record.RaidUnlockTime.AsShortTime()}");
+                text.AppendLine($"<b>" + _HTML_(I18N.GetString("Available from")) + $"</b>: {TimeService.AsShortTime(record.RaidUnlockTime)}");
             if (record.RaidEndTime != default(DateTime))
-                text.AppendLine($"<b>Beschikbaar tot</b>: {record.RaidEndTime.AsShortTime()}");
+                text.AppendLine($"<b>" + _HTML_(I18N.GetString("Available until")) + $"</b>: {TimeService.AsShortTime(record.RaidEndTime)}");
 
             if (null == record.Location)
             {
-                text.AppendLine($"\r\nJe moet nog aangeven waar de raid is.\b\r<i>Stuur een locatie-bericht naaar deze chat. Dit kan niet met telelgram desktop. Op je mobiel kan je op de paperclip klikken, de kaart verslepen tot het puntje op de juste plek staat, en dan delen.</i>");
+                text.AppendLine($"\n");
+                text.AppendLine(_HTML_(I18N.GetString("Please specify the gym's location. You can send a location from the telegram mobile client by pressing the paperclip button and selecting Location. Then drag the map so the position marker is at the location of the gym. The address information will automatically be added by the bot.")));
             }
 
             Client.SendMessageToChat(user.ID, text.ToString(), "HTML", true, true, null, CreateWizardMarkup(user, record));
@@ -460,7 +472,7 @@ namespace PokemonRaidBot.Modules
             {
                 buttons.Add(new InlineKeyboardButton { text = $"⛔️: {i}m", callback_data = $"{CbqTimeSelected}:{i}" });
             }
-            buttons.Add(new InlineKeyboardButton { text = $"Anders...", callback_data = $"{CbqManuallyEnterStartTime}" });
+            buttons.Add(new InlineKeyboardButton { text = _HTML_(I18N.GetString("Other...")), callback_data = $"{CbqManuallyEnterStartTime}" });
 
             InlineKeyboardMarkup result = new InlineKeyboardMarkup();
             result.inline_keyboard = SplitButtonsIntoLines(buttons, maxElementsPerLine: 5, maxCharactersPerLine: 30);
@@ -528,17 +540,17 @@ namespace PokemonRaidBot.Modules
             row = new List<InlineKeyboardButton>();
             row.Add(new InlineKeyboardButton
             {
-                text = (string.IsNullOrEmpty(record.Raid) ? "" : "✅ ") + $"Raid",
+                text = (string.IsNullOrEmpty(record.Raid) ? "" : "✅ ") + _HTML_(I18N.GetString("Raid")),
                 callback_data = CbqRaid
             });
             row.Add(new InlineKeyboardButton
             {
-                text = (string.IsNullOrEmpty(record.Gym) ? "" : "✅ ") + $"Gym",
+                text = (string.IsNullOrEmpty(record.Gym) ? "" : "✅ ") + _HTML_(I18N.GetString("Gym")),
                 callback_data = CbqGym
             });
             row.Add(new InlineKeyboardButton
             {
-                text = $"Kleur",
+                text = _HTML_(I18N.GetString("Alignment")),
                 callback_data = CbqAlignment
             });
             result.inline_keyboard.Add(row);
@@ -546,12 +558,12 @@ namespace PokemonRaidBot.Modules
             row = new List<InlineKeyboardButton>();
             row.Add(new InlineKeyboardButton
             {
-                text = (record.RaidEndTime != default(DateTime) && record.RaidEndTime >= DateTime.UtcNow ? "✅ " : "") + $"Tijd",
+                text = (record.RaidEndTime != default(DateTime) && record.RaidEndTime >= DateTime.UtcNow ? "✅ " : "") + _HTML_(I18N.GetString("Time")),
                 callback_data = CbqTime
             });
             row.Add(new InlineKeyboardButton
             {
-                text = $"🗑 Wissen",
+                text = _HTML_(I18N.GetString("🗑 Reset")),
                 callback_data = CbqClear
             });
             result.inline_keyboard.Add(row);
@@ -559,7 +571,7 @@ namespace PokemonRaidBot.Modules
             row = new List<InlineKeyboardButton>();
             row.Add(new InlineKeyboardButton
             {
-                text = $"💾 Klaar",
+                text = _HTML_(I18N.GetString("💾 Done")),
                 callback_data = CbqDone
             });
             result.inline_keyboard.Add(row);

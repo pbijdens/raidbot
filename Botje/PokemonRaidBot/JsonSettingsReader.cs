@@ -12,10 +12,10 @@ namespace PokemonRaidBot
         {
             public string BotKey { get; set; }
             public List<string> Timezones { get; set; }
-            public List<string> AdministratorUsernames { get; set; }
             public long? PublicationChannel { get; set; }
             public string GoogleLocationAPIKey { get; set; }
             public string DataFolder { get; set; }
+            public string Language { get; set; }
         }
 
         private Settings _settings;
@@ -24,13 +24,13 @@ namespace PokemonRaidBot
 
         public string[] Timezones => _settings.Timezones?.ToArray();
 
-        public string[] AdministratorUsernames => _settings.AdministratorUsernames?.ToArray();
-
         public long? PublicationChannel => _settings.PublicationChannel;
 
         public string GoogleLocationAPIKey => _settings.GoogleLocationAPIKey;
 
         public string DataFolder => _settings.DataFolder;
+
+        public string Language => _settings.Language;
 
         public void Read(string filename, string fallback)
         {

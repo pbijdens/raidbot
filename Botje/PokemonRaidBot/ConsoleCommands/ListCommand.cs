@@ -1,12 +1,12 @@
 ﻿using Botje.Core;
 using Botje.Core.Commands;
-using Botje.Core.Utils;
 using Botje.DB;
 using Botje.Messaging;
 using Botje.Messaging.PrivateConversation;
 using Ninject;
 using PokemonRaidBot.Entities;
 using PokemonRaidBot.Modules;
+using PokemonRaidBot.Utils;
 using System;
 using System.Linq;
 
@@ -31,6 +31,9 @@ namespace PokemonRaidBot.ConsoleCommands
 
         [Inject]
         public IBotModule[] Modules { set { _eventHandler = value.OfType<RaidEventHandler>().FirstOrDefault(); } }
+
+        [Inject]
+        public ITimeService TimeService { get; set; }
 
         public override CommandInfo Info => new CommandInfo
         {
@@ -61,7 +64,7 @@ namespace PokemonRaidBot.ConsoleCommands
                 var team = DB.GetCollection<UserSettings>().Find(x => x.User.ID == r.Raid.User.ID).FirstOrDefault()?.Team;
 
                 var isPublished = r.IsPublished ? "PUB" : "   ";
-                Console.WriteLine($"[{r.PublicID}] [{isPublished }] [{published}/{total} = {Math.Round(100 * (double)published / (double)total, 1)}] [{TimeUtils.AsLocalShortTime(r.Raid.RaidUnlockTime)}] [{team}] [{r.Raid.User.UsernameOrName()}] [{r.Raid.Gym}]");
+                Console.WriteLine($"[{r.PublicID}] [{isPublished }] [{published}/{total} = {Math.Round(100 * (double)published / (double)total, 1)}] [{TimeService.AsLocalShortTime(r.Raid.RaidUnlockTime)}] [{team}] [{r.Raid.User.UsernameOrName()}] [{r.Raid.Gym}]");
             }
             return true;
         }

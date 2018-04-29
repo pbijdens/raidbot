@@ -4,6 +4,7 @@ using Botje.DB;
 using Botje.Messaging;
 using Botje.Messaging.Events;
 using Botje.Messaging.Models;
+using NGettext;
 using Ninject;
 using PokemonRaidBot.Entities;
 using System;
@@ -13,7 +14,7 @@ namespace PokemonRaidBot.ChatCommands
 {
     public abstract class ChatCommandModuleBase : IBotModule
     {
-        protected readonly Func<string, string> _ = (s) => MessageUtils.HtmlEscape(s);
+        protected readonly Func<string, string> _HTML_ = (s) => MessageUtils.HtmlEscape(s);
 
         public enum Source
         {
@@ -23,6 +24,10 @@ namespace PokemonRaidBot.ChatCommands
         }
 
         protected ILogger Log;
+
+        /// <summary></summary>
+        [Inject]
+        public ICatalog I18N { get; set; }
 
         /// <summary></summary>
         [Inject]

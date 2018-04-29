@@ -1,0 +1,475 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-04-29 17:13+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+#: ChatCommands/Alias.cs:43
+#, csharp-format
+msgid ""
+"Your alias in the subscriptions now is '{0}'. Remove the alias using the '/"
+"alias -' command."
+msgstr ""
+
+#: ChatCommands/Alias.cs:48
+#, csharp-format
+msgid "Your regular username of '{0}' will be used in the subscription list."
+msgstr ""
+
+#: ChatCommands/Level.cs:43
+#, csharp-format
+msgid ""
+"Your Pokémon Go trainer level now is {0}.\n"
+"Use '/level 0' to remove your level."
+msgstr ""
+
+#: ChatCommands/Level.cs:48
+msgid ""
+"Your Pokémon Go trainer level is currently not shown.\n"
+"Use '/level [yourlevel]' to set your level."
+msgstr ""
+
+#: ChatCommands/RaidStatistics.cs:45
+msgid ""
+"Use '/gyminfo \"<regex>\"' to obtain statistics about all raids on matching "
+"gyms."
+msgstr ""
+
+#: ChatCommands/RaidStatistics.cs:53
+#, csharp-format
+msgid "Statistics for \"{0}\""
+msgstr ""
+
+#: ChatCommands/RaidStatistics.cs:68
+msgid "Too many results."
+msgstr ""
+
+#: ChatCommands/RaidStatistics.cs:77
+#, csharp-format
+msgid ""
+"An error occurred processing statistics for \"{0}\" (is that even a regular "
+"expression?): {1}"
+msgstr ""
+
+#: Modules/RaidCreationWizard.cs:94
+msgid "Enter the name of the gym."
+msgstr ""
+
+#: Modules/RaidCreationWizard.cs:99
+msgid "Enter the name of the Pokémon."
+msgstr ""
+
+#: Modules/RaidCreationWizard.cs:103
+msgid "Specify the current gym's alignment."
+msgstr ""
+
+#: Modules/RaidCreationWizard.cs:106
+msgid "Updated the gym alignment."
+msgstr ""
+
+#: Modules/RaidCreationWizard.cs:113
+msgid ""
+"Please specify when the raid will take place. If the egg is yet to hatch, "
+"use one of the 🥚 buttons to indicate the amount of time left before the egg "
+"hatches. If the egg already hatched use one of the ⛔️ to indicate how many "
+"minutes are left for the raid."
+msgstr ""
+
+#: Modules/RaidCreationWizard.cs:116 Modules/RaidCreationWizard.cs:130
+msgid "Raid time updated."
+msgstr ""
+
+#: Modules/RaidCreationWizard.cs:123
+msgid "Select a date for this raid from the list below."
+msgstr ""
+
+#: Modules/RaidCreationWizard.cs:127
+msgid "Select a start time."
+msgstr ""
+
+#: Modules/RaidCreationWizard.cs:135
+msgid "Cleared."
+msgstr ""
+
+#: Modules/RaidCreationWizard.cs:140
+msgid ""
+"The raid was created but not published yet. You can publish or share the "
+"raid with the corresponding buttons in the block."
+msgstr ""
+
+#: Modules/RaidCreationWizard.cs:144
+msgid "If you say so."
+msgstr ""
+
+#: Modules/RaidCreationWizard.cs:149
+#, csharp-format
+msgid "Your new team is {0}."
+msgstr ""
+
+#: Modules/RaidCreationWizard.cs:176
+msgid ""
+"Please specify which Pokémon the raid is for. If unknown, just enter the "
+"level of the raid."
+msgstr ""
+
+#: Modules/RaidCreationWizard.cs:181
+msgid "Please specify the name of the gym."
+msgstr ""
+
+#: Modules/RaidCreationWizard.cs:186 Modules/RaidCreationWizard.cs:416
+msgid ""
+"Please specify the gym's location. You can send a location from the telegram "
+"mobile client by pressing the paperclip button and selecting Location. Then "
+"drag the map so the position marker is at the location of the gym. The "
+"address information will automatically be added by the bot."
+msgstr ""
+
+#: Modules/RaidCreationWizard.cs:191
+msgid "Please specify when the raid will take place."
+msgstr ""
+
+#: Modules/RaidCreationWizard.cs:228
+msgid "Pick your team from the list."
+msgstr ""
+
+#: Modules/RaidCreationWizard.cs:232
+msgid ""
+"Send a location from the telegram mobile client by pressing the paperclip "
+"button and selecting Location. Then drag the map so the position marker is "
+"at the location of the gym. The address information will automatically be "
+"added by the bot.\n"
+"After having sent the location, will out the remaining details.\n"
+"Finally, when you are ready, you can choose to either publish the raid to "
+"the public channel, or share your raid privately using the share-button."
+msgstr ""
+
+#: Modules/RaidCreationWizard.cs:403 Modules/RaidCreationWizard.cs:543
+#: Modules/RaidEventHandler.cs:419
+msgid "Raid"
+msgstr ""
+
+#: Modules/RaidCreationWizard.cs:404 Modules/RaidCreationWizard.cs:548
+#: Modules/RaidEventHandler.cs:423
+msgid "Gym"
+msgstr ""
+
+#: Modules/RaidCreationWizard.cs:405 Modules/RaidCreationWizard.cs:553
+#: Modules/RaidEventHandler.cs:427
+msgid "Alignment"
+msgstr ""
+
+#: Modules/RaidCreationWizard.cs:406 Modules/RaidEventHandler.cs:431
+msgid "Address"
+msgstr ""
+
+#: Modules/RaidCreationWizard.cs:407
+msgid "GPS Location"
+msgstr ""
+
+#: Modules/RaidCreationWizard.cs:409
+msgid "Available from"
+msgstr ""
+
+#: Modules/RaidCreationWizard.cs:411
+msgid "Available until"
+msgstr ""
+
+#: Modules/RaidCreationWizard.cs:475
+msgid "Other..."
+msgstr ""
+
+#: Modules/RaidCreationWizard.cs:561 Modules/RaidEventHandler.cs:448
+msgid "Time"
+msgstr ""
+
+#: Modules/RaidCreationWizard.cs:566
+msgid "🗑 Reset"
+msgstr ""
+
+#: Modules/RaidCreationWizard.cs:574
+msgid "💾 Done"
+msgstr ""
+
+#: Modules/RaidEventHandler.cs:91
+#, csharp-format
+msgid "{0} raid at {1} {2}"
+msgstr ""
+
+#: Modules/RaidEventHandler.cs:114
+msgid "Excellent! You arrived."
+msgstr ""
+
+#: Modules/RaidEventHandler.cs:121
+msgid "That's too bad 😞"
+msgstr ""
+
+#: Modules/RaidEventHandler.cs:130
+#, csharp-format
+msgid "Joined for team {0}"
+msgstr ""
+
+#: Modules/RaidEventHandler.cs:135
+msgid "You're on the list now."
+msgstr ""
+
+#: Modules/RaidEventHandler.cs:148
+msgid "Publishing the raid."
+msgstr ""
+
+#: Modules/RaidEventHandler.cs:154
+msgid "Refreshing..."
+msgstr ""
+
+#: Modules/RaidEventHandler.cs:163
+#, csharp-format
+msgid "You will be there at {0}."
+msgstr ""
+
+#: Modules/RaidEventHandler.cs:168
+msgid "Error updating time."
+msgstr ""
+
+#: Modules/RaidEventHandler.cs:174
+msgid "Go to our private chat to update the alignment."
+msgstr ""
+
+#: Modules/RaidEventHandler.cs:177
+msgid "What's the current gym alignment?"
+msgstr ""
+
+#: Modules/RaidEventHandler.cs:187
+msgid ""
+"Updated the gym alignment. Manual refresh of the published raid is required."
+msgstr ""
+
+#: Modules/RaidEventHandler.cs:188
+msgid "Thanks. Now please manually refresh the published message."
+msgstr ""
+
+#: Modules/RaidEventHandler.cs:412
+msgid "Subscribed"
+msgstr ""
+
+#: Modules/RaidEventHandler.cs:415
+msgid "Remarks"
+msgstr ""
+
+#: Modules/RaidEventHandler.cs:438
+msgid "Links"
+msgstr ""
+
+#: Modules/RaidEventHandler.cs:438
+msgid "route"
+msgstr ""
+
+#: Modules/RaidEventHandler.cs:438
+msgid "portal map"
+msgstr ""
+
+#: Modules/RaidEventHandler.cs:443
+msgid "Hatches in"
+msgstr ""
+
+#: Modules/RaidEventHandler.cs:452
+msgid "Ends"
+msgstr ""
+
+#: Modules/RaidEventHandler.cs:452
+msgid "in"
+msgstr ""
+
+#: Modules/RaidEventHandler.cs:462
+msgid "Declined"
+msgstr ""
+
+#: Modules/RaidEventHandler.cs:464
+msgid "In a private chat, use the /level command to set your player level."
+msgstr ""
+
+#: Modules/RaidEventHandler.cs:493
+msgid "level"
+msgstr ""
+
+#: Modules/RaidEventHandler.cs:509
+#, csharp-format
+msgid "there for {0}"
+msgid_plural "there for {0}"
+msgstr[0] ""
+msgstr[1] ""
+
+#: Modules/RaidEventHandler.cs:533
+msgid "Subscriptions"
+msgstr ""
+
+#: Modules/RaidEventHandler.cs:533
+#, csharp-format
+msgid "{0} player"
+msgid_plural "{0} players"
+msgstr[0] ""
+msgstr[1] ""
+
+#: Modules/RaidEventHandler.cs:551
+msgid "Yes"
+msgstr ""
+
+#: Modules/RaidEventHandler.cs:552
+msgid "❤️"
+msgstr ""
+
+#: Modules/RaidEventHandler.cs:553
+msgid "💙"
+msgstr ""
+
+#: Modules/RaidEventHandler.cs:554
+msgid "💛"
+msgstr ""
+
+#: Modules/RaidEventHandler.cs:555
+msgid "No"
+msgstr ""
+
+#: Modules/RaidEventHandler.cs:559
+msgid "I +1"
+msgstr ""
+
+#: Modules/RaidEventHandler.cs:560
+msgid "I +2"
+msgstr ""
+
+#: Modules/RaidEventHandler.cs:561
+msgid "I +3"
+msgstr ""
+
+#: Modules/RaidEventHandler.cs:562
+msgid "I +4"
+msgstr ""
+
+#: Modules/RaidEventHandler.cs:563
+msgid "I +5"
+msgstr ""
+
+#: Modules/RaidEventHandler.cs:567
+msgid "🔄"
+msgstr ""
+
+#: Modules/RaidEventHandler.cs:568
+msgid "💟"
+msgstr ""
+
+#: Modules/RaidEventHandler.cs:569
+msgid "Share"
+msgstr ""
+
+#: Modules/RaidEventHandler.cs:572
+msgid "📣 Publish"
+msgstr ""
+
+#: Modules/RaidEventHandler.cs:589
+msgid "Arrived"
+msgstr ""
+
+#: Utils/TimeService.cs:23
+msgid "HH:mm"
+msgstr ""
+
+#: Utils/TimeService.cs:29
+msgid "HH:mm:ss.fff"
+msgstr ""
+
+#: Utils/TimeService.cs:63
+msgid "January"
+msgstr ""
+
+#: Utils/TimeService.cs:64
+msgid "February"
+msgstr ""
+
+#: Utils/TimeService.cs:65
+msgid "March"
+msgstr ""
+
+#: Utils/TimeService.cs:66
+msgid "April"
+msgstr ""
+
+#: Utils/TimeService.cs:67
+msgid "May"
+msgstr ""
+
+#: Utils/TimeService.cs:68
+msgid "June"
+msgstr ""
+
+#: Utils/TimeService.cs:69
+msgid "July"
+msgstr ""
+
+#: Utils/TimeService.cs:70
+msgid "August"
+msgstr ""
+
+#: Utils/TimeService.cs:71
+msgid "September"
+msgstr ""
+
+#: Utils/TimeService.cs:72
+msgid "October"
+msgstr ""
+
+#: Utils/TimeService.cs:73
+msgid "November"
+msgstr ""
+
+#: Utils/TimeService.cs:74
+msgid "December"
+msgstr ""
+
+#: Utils/TimeService.cs:83
+msgid "MM-dd-yy HH:mm"
+msgstr ""
+
+#: Utils/TimeService.cs:105
+msgid "seconds"
+msgstr ""
+
+#: Utils/TimeService.cs:105
+msgid "second"
+msgstr ""
+
+#: Utils/TimeService.cs:106
+msgid "minutes"
+msgstr ""
+
+#: Utils/TimeService.cs:106
+msgid "minute"
+msgstr ""
+
+#: Utils/TimeService.cs:107
+msgid "hours"
+msgstr ""
+
+#: Utils/TimeService.cs:107
+msgid "hour"
+msgstr ""
+
+#: Utils/TimeService.cs:108
+msgid "days"
+msgstr ""
+
+#: Utils/TimeService.cs:108
+msgid "day"
+msgstr ""

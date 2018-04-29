@@ -17,7 +17,7 @@ namespace PokemonRaidBot.ChatCommands
         private void CmdWhereAmI(long chatID)
         {
             Chat chat = Client.GetChat(chatID);
-            Client.SendMessageToChat(chatID, $"<b>Chat:</b> " + _(chat.ToString()));
+            Client.SendMessageToChat(chatID, $"<b>Chat:</b> " + _HTML_(chat.ToString()));
         }
     }
 }

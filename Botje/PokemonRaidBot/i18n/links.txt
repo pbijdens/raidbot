@@ -1,0 +1,11 @@
+﻿http://www.gnu.org/software/gettext/manual/html_node/xgettext-Invocation.html#xgettext-Invocation
+
+https://poedit.net/
+
+https://github.com/neris/NGettext
+
+
+workflow:
+  run xgettext -D . -o raidbot.pot -p i18n -L 'C#' --from-code='UTF-8' `find . -name '*.cs' -print` 
+  use poedit to translate the messages
+  save in i18n/<locale>/LC_MESSAGES/raidbot.po

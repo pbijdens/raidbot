@@ -16,7 +16,7 @@ namespace PokemonRaidBot.ChatCommands
 
         private void CmdWhoAmI(long conversationID, User who)
         {
-            Client.SendMessageToChat(conversationID, $"<b>User:</b> " + _(who.ToString()));
+            Client.SendMessageToChat(conversationID, $"<b>User:</b> " + _HTML_(who.ToString()));
         }
     }
 }

@@ -40,11 +40,13 @@ namespace PokemonRaidBot.ChatCommands
 
             if (userSetting.Level > 0)
             {
-                Client.SendMessageToChat(message.Chat.ID, $"Je Pokémon GO level is nu \"{userSetting.Level}\".\r\n\r\nGebruik /level &lt;level&gt. om je level te veranderen (bijvoorbeeld /level 38).", "HTML", true, false, message.MessageID);
+                string msg = I18N.GetString("Your Pokémon Go trainer level now is {0}.\nUse '/level 0' to remove your level.", userSetting.Level);
+                Client.SendMessageToChat(message.Chat.ID, msg, "HTML", true, false, message.MessageID);
             }
             else
             {
-                Client.SendMessageToChat(message.Chat.ID, $"Je Pokémon GO level wordt op dit moment niet getoond.\r\n\r\nGebruik /level &lt;level&gt. om je level in te stellen (bijvoorbeeld /level 38).", "HTML", true, false, message.MessageID);
+                string msg = I18N.GetString("Your Pokémon Go trainer level is currently not shown.\nUse '/level [yourlevel]' to set your level.");
+                Client.SendMessageToChat(message.Chat.ID, msg, "HTML", true, false, message.MessageID);
             }
         }
     }

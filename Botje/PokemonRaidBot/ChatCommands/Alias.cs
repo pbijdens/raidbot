@@ -26,18 +26,27 @@ namespace PokemonRaidBot.ChatCommands
             {
                 lock (UserSettingsLock)
                 {
-                    userSetting.Alias = args[0];
+                    if (args[0] == "-")
+                    {
+                        userSetting.Alias = string.Empty;
+                    }
+                    else
+                    {
+                        userSetting.Alias = args[0];
+                    }
                     dbSetUserSettings.Update(userSetting);
                 }
             }
 
             if (!string.IsNullOrEmpty(userSetting.Alias))
             {
-                Client.SendMessageToChat(message.Chat.ID, $"In de inschrijvingen sta je vermeld als \"{_(userSetting.Alias)}\"", "HTML", true, false, message.MessageID);
+                string msg = I18N.GetString("Your alias in the subscriptions now is '{0}'. Remove the alias using the '/alias -' command.", _HTML_(userSetting.Alias));
+                Client.SendMessageToChat(message.Chat.ID, msg, "HTML", true, false, message.MessageID);
             }
             else
             {
-                Client.SendMessageToChat(message.Chat.ID, $"In de inschrijvingen sta je vermeld met je reguliere username, namelijk \"{_(message.From.ShortName())}\".", "HTML", true, false, message.MessageID);
+                string msg = I18N.GetString("Your regular username of '{0}' will be used in the subscription list.", _HTML_(message.From.ShortName()));
+                Client.SendMessageToChat(message.Chat.ID, msg, "HTML", true, false, message.MessageID);
             }
         }
     }

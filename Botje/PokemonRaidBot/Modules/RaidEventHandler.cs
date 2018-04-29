@@ -5,9 +5,11 @@ using Botje.Messaging;
 using Botje.Messaging.Events;
 using Botje.Messaging.Models;
 using Botje.Messaging.PrivateConversation;
+using NGettext;
 using Ninject;
 using PokemonRaidBot.Entities;
 using PokemonRaidBot.RaidBot.Utils;
+using PokemonRaidBot.Utils;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -30,6 +32,13 @@ namespace PokemonRaidBot.Modules
         private const string QrSetAlignment = "qr.cco"; // qr.cco:{raid}
         private const string QrAlignmentSelected = "qr.als"; // qr.als:{raid}:{teamid}
         private const string IqPrefix = "qr-";
+
+        [Inject]
+        public ITimeService TimeService { get; set; }
+
+        [Inject]
+        public ICatalog I18N { get; set; }
+        protected readonly Func<string, string> _HTML_ = (s) => MessageUtils.HtmlEscape(s);
 
         [Inject]
         public ILoggerFactory LoggerFactory { set { _log = value.Create(GetType()); } }
@@ -78,8 +87,8 @@ namespace PokemonRaidBot.Modules
                     results.Add(new InlineQueryResultArticle
                     {
                         id = raid.PublicID,
-                        title = $"{raid.Raid.Raid} {TimeUtils.AsShortTime(raid.Raid.RaidUnlockTime)}-{TimeUtils.AsShortTime(raid.Raid.RaidEndTime)}",
-                        description = $"{raid.Raid.Raid} raid bij {raid.Raid.Gym} {raid.Raid.Address}",
+                        title = $"{raid.Raid.Raid} {TimeService.AsShortTime(raid.Raid.RaidUnlockTime)}-{TimeService.AsShortTime(raid.Raid.RaidEndTime)}",
+                        description = _HTML_(I18N.GetString("{0} raid at {1} {2}", raid.Raid.Raid, raid.Raid.Gym, raid.Raid.Address)),
                         input_message_content = new InputMessageContent
                         {
                             message_text = text,
@@ -102,14 +111,14 @@ namespace PokemonRaidBot.Modules
             {
                 case QrArrived: // :raid
                     _log.Trace($"{e.CallbackQuery.From.DisplayName()} has arrived for raid {args[0]}");
-                    Client.AnswerCallbackQuery(e.CallbackQuery.ID, $"Je bent er! Geweldig!");
+                    Client.AnswerCallbackQuery(e.CallbackQuery.ID, _HTML_(I18N.GetString("Excellent! You arrived.")));
                     UpdateUserRaidJoinOrUpdateAttendance(e.CallbackQuery.From, args[0]);
                     UpdateUserRaidArrived(e.CallbackQuery.From, args[0]);
                     UpdateRaidMessage(e.CallbackQuery.Message?.Chat?.ID, e.CallbackQuery.Message?.MessageID, e.CallbackQuery.InlineMessageId, args[0], e.CallbackQuery.Message?.Chat?.Type);
                     break;
                 case QrDecline: // :raid
                     _log.Trace($"{e.CallbackQuery.From.DisplayName()} has declined for raid {args[0]}");
-                    Client.AnswerCallbackQuery(e.CallbackQuery.ID, $"Jammer 😞");
+                    Client.AnswerCallbackQuery(e.CallbackQuery.ID, _HTML_(I18N.GetString("That's too bad 😞")));
                     UpdateUserRaidNegative(e.CallbackQuery.From, args[0]);
                     UpdateRaidMessage(e.CallbackQuery.Message?.Chat?.ID, e.CallbackQuery.Message?.MessageID, e.CallbackQuery.InlineMessageId, args[0], e.CallbackQuery.Message?.Chat?.Type);
                     break;
@@ -118,12 +127,12 @@ namespace PokemonRaidBot.Modules
                     if (args.Length >= 3 && int.TryParse(args[2], out int teamID) && teamID >= (int)Team.Unknown && teamID <= (int)Team.Instinct)
                     {
                         _log.Trace($"{e.CallbackQuery.From.DisplayName()} joined team {((Team)teamID).AsReadableString()}");
-                        Client.AnswerCallbackQuery(e.CallbackQuery.ID, $"Ingeschreven voor voor team {((Team)teamID).AsReadableString()}");
+                        Client.AnswerCallbackQuery(e.CallbackQuery.ID, _HTML_(I18N.GetString("Joined for team {0}", _HTML_(((Team)teamID).AsReadableString()))));
                         UpdateUserSettingsForTeam(e.CallbackQuery.From, (Team)teamID);
                     }
                     else
                     {
-                        Client.AnswerCallbackQuery(e.CallbackQuery.ID, $"Inschrijving geregeld.");
+                        Client.AnswerCallbackQuery(e.CallbackQuery.ID, _HTML_(I18N.GetString("You're on the list now.")));
                     }
                     // Because we updated the user settings first, the user will automatically be added or moved to the
                     // correct team by the join function.
@@ -136,13 +145,13 @@ namespace PokemonRaidBot.Modules
                     break;
                 case QrPublish: // :raid
                     _log.Info($"{e.CallbackQuery.From.DisplayName()} published raid {args[0]}");
-                    Client.AnswerCallbackQuery(e.CallbackQuery.ID, $"Raid wordt gepubliceerd.");
+                    Client.AnswerCallbackQuery(e.CallbackQuery.ID, _HTML_(I18N.GetString("Publishing the raid.")));
                     PublishRaid(e.CallbackQuery.From, args[0]);
                     UpdateRaidMessage(e.CallbackQuery.Message?.Chat?.ID, e.CallbackQuery.Message?.MessageID, e.CallbackQuery.InlineMessageId, args[0], e.CallbackQuery.Message?.Chat?.Type);
                     break;
                 case QrRefresh: // :raid
                     _log.Trace($"{e.CallbackQuery.From.DisplayName()} refreshed {args[0]}");
-                    Client.AnswerCallbackQuery(e.CallbackQuery.ID, $"Raid informatie wordt ververst...");
+                    Client.AnswerCallbackQuery(e.CallbackQuery.ID, _HTML_(I18N.GetString("Refreshing...")));
                     UpdateRaidMessage(e.CallbackQuery.Message?.Chat?.ID, e.CallbackQuery.Message?.MessageID, e.CallbackQuery.InlineMessageId, args[0], e.CallbackQuery.Message?.Chat?.Type);
                     break;
                 case QrSetTime: // :raid:ticks
@@ -150,22 +159,22 @@ namespace PokemonRaidBot.Modules
                     if (long.TryParse(args[1], out long ticks))
                     {
                         var utcWhen = new DateTime(ticks);
-                        _log.Trace($"{e.CallbackQuery.From.DisplayName()} updated their time for raid {args[0]} to {TimeUtils.AsShortTime(utcWhen)}");
-                        Client.AnswerCallbackQuery(e.CallbackQuery.ID, $"Je bent er om {TimeUtils.AsShortTime(utcWhen)}.");
+                        _log.Trace($"{e.CallbackQuery.From.DisplayName()} updated their time for raid {args[0]} to {TimeService.AsShortTime(utcWhen)}");
+                        Client.AnswerCallbackQuery(e.CallbackQuery.ID, _HTML_(I18N.GetString("You will be there at {0}.", TimeService.AsShortTime(utcWhen))));
                         UpdateUserRaidTime(e.CallbackQuery.From, args[0], utcWhen);
                     }
                     else
                     {
-                        Client.AnswerCallbackQuery(e.CallbackQuery.ID, $"Tijd wordt niet aangepast want ik begrijp het niet.");
+                        Client.AnswerCallbackQuery(e.CallbackQuery.ID, _HTML_(I18N.GetString("Error updating time.")));
                     }
                     UpdateRaidMessage(e.CallbackQuery.Message?.Chat?.ID, e.CallbackQuery.Message?.MessageID, e.CallbackQuery.InlineMessageId, args[0], e.CallbackQuery.Message?.Chat?.Type);
                     break;
                 case QrSetAlignment: // :{raid}
                     _log.Trace($"{e.CallbackQuery.From.DisplayName()} wants to change the gym alignment {args[0]}");
-                    Client.AnswerCallbackQuery(e.CallbackQuery.ID, $"Pas de kleur aan in je privé-chat met de bot.");
+                    Client.AnswerCallbackQuery(e.CallbackQuery.ID, _HTML_(I18N.GetString("Go to our private chat to update the alignment.")));
                     try
                     {
-                        Client.SendMessageToChat(e.CallbackQuery.From.ID, $"Welke kleur heeft de gym op dit moment?", "HTML", true, true, null, CreateAlignmentMenu(args[0]));
+                        Client.SendMessageToChat(e.CallbackQuery.From.ID, _HTML_(I18N.GetString("What's the current gym alignment?")), "HTML", true, true, null, CreateAlignmentMenu(args[0]));
                     }
                     catch (Exception ex)
                     {
@@ -175,8 +184,8 @@ namespace PokemonRaidBot.Modules
                 case QrAlignmentSelected: // :{raid}:{alignment}
                     var team = (Team)Int32.Parse(args[1]);
                     _log.Info($"{e.CallbackQuery.From.DisplayName()} changed the gym alignment for {args[0]} to {team}");
-                    Client.EditMessageText($"{e.CallbackQuery.Message.Chat.ID}", e.CallbackQuery.Message.MessageID, null, "Gym kleur is aangepast. Je moet zelf even de gepubliceerde raid verversen.");
-                    Client.AnswerCallbackQuery(e.CallbackQuery.ID, $"Dank je wel. Ververs zelf even de gepubliceerde raid.");
+                    Client.EditMessageText($"{e.CallbackQuery.Message.Chat.ID}", e.CallbackQuery.Message.MessageID, null, _HTML_(I18N.GetString("Updated the gym alignment. Manual refresh of the published raid is required.")));
+                    Client.AnswerCallbackQuery(e.CallbackQuery.ID, _HTML_(I18N.GetString("Thanks. Now please manually refresh the published message.")));
                     UpdateGymAlignment(e.CallbackQuery.From, args[0], team);
                     break;
             }
@@ -400,47 +409,47 @@ namespace PokemonRaidBot.Modules
 
             StringBuilder sb = new StringBuilder();
 
-            sb.AppendLine($"<b>Ingeschreven:</b> {tps}");
+            sb.AppendLine($"<b>" + _HTML_(I18N.GetString("Subscribed")) + $":</b> {tps}");
             if (!string.IsNullOrWhiteSpace(raid.Raid.Remarks))
             {
-                sb.AppendLine($"<b>Opmerkingen:</b> {MessageUtils.HtmlEscape(raid.Raid.Remarks)}");
+                sb.AppendLine($"<b>" + _HTML_(I18N.GetString("Remarks")) + $":</b> {MessageUtils.HtmlEscape(raid.Raid.Remarks)}");
             }
             if (!string.IsNullOrWhiteSpace(raid.Raid.Raid))
             {
-                sb.AppendLine($"<b>Raid:</b> {MessageUtils.HtmlEscape(raid.Raid.Raid)}");
+                sb.AppendLine($"<b>" + _HTML_(I18N.GetString("Raid")) + $":</b> {MessageUtils.HtmlEscape(raid.Raid.Raid)}");
             }
             if (!string.IsNullOrWhiteSpace(raid.Raid.Gym))
             {
-                sb.AppendLine($"<b>Gym:</b> {MessageUtils.HtmlEscape(raid.Raid.Gym)}");
+                sb.AppendLine($"<b>" + _HTML_(I18N.GetString("Gym")) + $":</b> {MessageUtils.HtmlEscape(raid.Raid.Gym)}");
             }
             if (raid.Raid.Alignment != Team.Unknown)
             {
-                sb.AppendLine($"<b>Gym kleur:</b> {MessageUtils.HtmlEscape(raid.Raid.Alignment.AsReadableString())}");
+                sb.AppendLine($"<b>" + _HTML_(I18N.GetString("Alignment")) + $":</b> {MessageUtils.HtmlEscape(raid.Raid.Alignment.AsReadableString())}");
             }
             if (!string.IsNullOrWhiteSpace(raid.Raid.Address))
             {
-                sb.AppendLine($"<b>Adres:</b> {MessageUtils.HtmlEscape(raid.Raid.Address)}");
+                sb.AppendLine($"<b>" + _HTML_(I18N.GetString("Address")) + $":</b> {MessageUtils.HtmlEscape(raid.Raid.Address)}");
             }
 
             if (null != raid.Raid.Location)
             {
                 string lat = raid.Raid.Location.Latitude.ToString(CultureInfo.InvariantCulture);
                 string lon = raid.Raid.Location.Longitude.ToString(CultureInfo.InvariantCulture);
-                sb.AppendLine($"<b>Links:</b> (<a href=\"https://www.google.com/maps/?daddr={lat},{lon}\">route</a>, <a href=\"https://ingress.com/intel?ll={lat},{lon}&z=17\">intel</a>)");
+                sb.AppendLine($"<b>" + _HTML_(I18N.GetString("Links")) + $":</b> (<a href=\"https://www.google.com/maps/?daddr={lat},{lon}\">" + _HTML_(I18N.GetString("route")) + $"</a>, <a href=\"https://ingress.com/intel?ll={lat},{lon}&z=17\">" + _HTML_(I18N.GetString("portal map")) + $"</a>)");
             }
 
             if (raid.Raid.RaidUnlockTime != default(DateTime) && raid.Raid.RaidUnlockTime >= DateTime.UtcNow)
             {
-                sb.AppendLine($"<b>Komt uit:</b> {TimeUtils.AsShortTime(raid.Raid.RaidUnlockTime)} (over {TimeUtils.AsReadableTimespan(raid.Raid.RaidUnlockTime - DateTime.UtcNow)})");
+                sb.AppendLine($"<b>" + _HTML_(I18N.GetString("Hatches in")) + $":</b> {TimeService.AsShortTime(raid.Raid.RaidUnlockTime)} (over {TimeService.AsReadableTimespan(raid.Raid.RaidUnlockTime - DateTime.UtcNow)})");
             }
 
             if (raid.Raid.RaidEndTime == default(DateTime) || raid.Raid.RaidEndTime < DateTime.UtcNow)
             {
-                sb.AppendLine($"<b>Tijd:</b> Onbekend of al voorbij");
+                sb.AppendLine($"<b>" + _HTML_(I18N.GetString("Time")) + $":</b> Unknown or in the past");
             }
             else
             {
-                sb.AppendLine($"<b>Afgelopen:</b> {TimeUtils.AsShortTime(raid.Raid.RaidEndTime)} (nog {TimeUtils.AsReadableTimespan(raid.Raid.RaidEndTime - DateTime.UtcNow)})");
+                sb.AppendLine($"<b>" + _HTML_(I18N.GetString("Ends")) + $":</b> {TimeService.AsShortTime(raid.Raid.RaidEndTime)} (" + _HTML_(I18N.GetString("in")) + $" {TimeService.AsReadableTimespan(raid.Raid.RaidEndTime - DateTime.UtcNow)})");
             }
 
             sb.Append(participationSB);
@@ -450,16 +459,11 @@ namespace PokemonRaidBot.Modules
             {
                 sb.AppendLine($"");
                 var str = string.Join(", ", naySayers.Select(x => $"{x.ShortName()}"));
-                sb.AppendLine($"<b>Afgemeld:</b> {str}");
+                sb.AppendLine($"<b>" + _HTML_(I18N.GetString("Declined")) + $":</b> {str}");
             }
-            sb.AppendLine($"\r\n<i>Gebruik in een privé chat met de bot het commando /level om je level in te stellen.</i>");
+            sb.AppendLine($"\n<i>" + _HTML_(I18N.GetString("In a private chat, use the /level command to set your player level.")) + $"</i>");
 
-            if (!raid.IsPublished)
-            {
-                sb.AppendLine($"\r\n⛔️ <b>Deze raid is nog niet gepubliceerd naar het raid-kanaal. Druk op '📣 Publiceren' om dit alsnog te doen.</b>");
-            }
-
-            sb.AppendLine($"\r\n#raid updated: <i>{DateTime.UtcNow.AsFullTime()}</i>");
+            sb.AppendLine($"\n#raid updated: <i>{TimeService.AsFullTime(DateTime.UtcNow)}</i>");
             return sb.ToString();
         }
 
@@ -486,7 +490,7 @@ namespace PokemonRaidBot.Modules
                         }
                         if (userRecord?.Level > 0)
                         {
-                            name += $" (level {userRecord?.Level})";
+                            name += $" (" + _HTML_(I18N.GetString("level")) + $" {userRecord?.Level})";
                         }
                         sb.Append($"  - {MessageUtils.HtmlEscape(name)}");
 
@@ -502,12 +506,11 @@ namespace PokemonRaidBot.Modules
 
                         if (p.UtcArrived != default(DateTime))
                         {
-                            string iszijn = p.Extra >= 1 ? "zijn" : "is";
-                            sb.Append($" [{iszijn} er al {TimeUtils.AsReadableTimespan(DateTime.UtcNow - p.UtcArrived)}]");
+                            sb.Append("[" + _HTML_(I18N.GetPluralString("there for {0}", "there for {0}", p.Extra + 1, TimeService.AsReadableTimespan(DateTime.UtcNow - p.UtcArrived))) + "]");
                         }
                         else if (p.UtcWhen != default(DateTime))
                         {
-                            sb.Append($" [{TimeUtils.AsShortTime(p.UtcWhen)}]");
+                            sb.Append($" [{TimeService.AsShortTime(p.UtcWhen)}]");
                         }
                         else
                         {
@@ -527,8 +530,7 @@ namespace PokemonRaidBot.Modules
             if (counter > 0)
             {
                 sb.AppendLine($"");
-                string persoonpersonen = counter == 1 ? "persoon" : "personen";
-                sb.AppendLine($"<b>Opkomst:</b> {counter} {persoonpersonen}");
+                sb.AppendLine($"<b>" + _HTML_(I18N.GetString("Subscriptions")) + $":</b> " + _HTML_(I18N.GetPluralString("{0} player", "{0} players", counter, counter)));
             }
         }
 
@@ -546,28 +548,28 @@ namespace PokemonRaidBot.Modules
                 List<InlineKeyboardButton> row;
 
                 row = new List<InlineKeyboardButton>();
-                row.Add(new InlineKeyboardButton { text = $"Ja!", callback_data = $"{QrJoin}:{raid.PublicID}:0" });
-                row.Add(new InlineKeyboardButton { text = $"❤️", callback_data = $"{QrJoin}:{raid.PublicID}::{(int)Team.Valor}" });
-                row.Add(new InlineKeyboardButton { text = $"💙", callback_data = $"{QrJoin}:{raid.PublicID}::{(int)Team.Mystic}" });
-                row.Add(new InlineKeyboardButton { text = $"💛", callback_data = $"{QrJoin}:{raid.PublicID}::{(int)Team.Instinct}" });
-                row.Add(new InlineKeyboardButton { text = $"Nee", callback_data = $"{QrDecline}:{raid.PublicID}" });
+                row.Add(new InlineKeyboardButton { text = _HTML_(I18N.GetString("Yes")), callback_data = $"{QrJoin}:{raid.PublicID}:0" });
+                row.Add(new InlineKeyboardButton { text = _HTML_(I18N.GetString("❤️")), callback_data = $"{QrJoin}:{raid.PublicID}::{(int)Team.Valor}" });
+                row.Add(new InlineKeyboardButton { text = _HTML_(I18N.GetString("💙")), callback_data = $"{QrJoin}:{raid.PublicID}::{(int)Team.Mystic}" });
+                row.Add(new InlineKeyboardButton { text = _HTML_(I18N.GetString("💛")), callback_data = $"{QrJoin}:{raid.PublicID}::{(int)Team.Instinct}" });
+                row.Add(new InlineKeyboardButton { text = _HTML_(I18N.GetString("No")), callback_data = $"{QrDecline}:{raid.PublicID}" });
                 result.inline_keyboard.Add(row);
 
                 row = new List<InlineKeyboardButton>();
-                row.Add(new InlineKeyboardButton { text = $"Ik +1", callback_data = $"{QrJoin}:{raid.PublicID}:1" });
-                row.Add(new InlineKeyboardButton { text = $"Ik +2", callback_data = $"{QrJoin}:{raid.PublicID}:2" });
-                row.Add(new InlineKeyboardButton { text = $"Ik +3", callback_data = $"{QrJoin}:{raid.PublicID}:3" });
-                row.Add(new InlineKeyboardButton { text = $"Ik +4", callback_data = $"{QrJoin}:{raid.PublicID}:4" });
-                row.Add(new InlineKeyboardButton { text = $"Ik +5", callback_data = $"{QrJoin}:{raid.PublicID}:5" });
+                row.Add(new InlineKeyboardButton { text = _HTML_(I18N.GetString("I +1")), callback_data = $"{QrJoin}:{raid.PublicID}:1" });
+                row.Add(new InlineKeyboardButton { text = _HTML_(I18N.GetString("I +2")), callback_data = $"{QrJoin}:{raid.PublicID}:2" });
+                row.Add(new InlineKeyboardButton { text = _HTML_(I18N.GetString("I +3")), callback_data = $"{QrJoin}:{raid.PublicID}:3" });
+                row.Add(new InlineKeyboardButton { text = _HTML_(I18N.GetString("I +4")), callback_data = $"{QrJoin}:{raid.PublicID}:4" });
+                row.Add(new InlineKeyboardButton { text = _HTML_(I18N.GetString("I +5")), callback_data = $"{QrJoin}:{raid.PublicID}:5" });
                 result.inline_keyboard.Add(row);
 
                 row = new List<InlineKeyboardButton>();
-                row.Add(new InlineKeyboardButton { text = "🔄", callback_data = $"{QrRefresh}:{raid.PublicID}" });
-                row.Add(new InlineKeyboardButton { text = "💟", callback_data = $"{QrSetAlignment}:{raid.PublicID}" });
-                row.Add(new InlineKeyboardButton { text = "Delen", switch_inline_query = $"{shareString}" });
+                row.Add(new InlineKeyboardButton { text = _HTML_(I18N.GetString("🔄")), callback_data = $"{QrRefresh}:{raid.PublicID}" });
+                row.Add(new InlineKeyboardButton { text = _HTML_(I18N.GetString("💟")), callback_data = $"{QrSetAlignment}:{raid.PublicID}" });
+                row.Add(new InlineKeyboardButton { text = _HTML_(I18N.GetString("Share")), switch_inline_query = $"{shareString}" });
                 if (!raid.IsPublished)
                 {
-                    row.Add(new InlineKeyboardButton { text = $"📣 Publiceren", callback_data = $"{QrPublish}:{raid.PublicID}" });
+                    row.Add(new InlineKeyboardButton { text = _HTML_(I18N.GetString("📣 Publish")), callback_data = $"{QrPublish}:{raid.PublicID}" });
                 }
                 result.inline_keyboard.Add(row);
 
@@ -581,10 +583,10 @@ namespace PokemonRaidBot.Modules
 
                 while (dtStart <= raid.Raid.RaidEndTime)
                 {
-                    row.Add(new InlineKeyboardButton { text = $"{TimeUtils.AsShortTime(dtStart)}", callback_data = $"{QrSetTime}:{raid.PublicID}:{dtStart.Ticks}" }); ;
+                    row.Add(new InlineKeyboardButton { text = $"{TimeService.AsShortTime(dtStart)}", callback_data = $"{QrSetTime}:{raid.PublicID}:{dtStart.Ticks}" }); ;
                     dtStart += TimeSpan.FromMinutes(5);
                 }
-                row.Add(new InlineKeyboardButton { text = $"Ben er", callback_data = $"{QrArrived}:{raid.PublicID}" }); ;
+                row.Add(new InlineKeyboardButton { text = _HTML_(I18N.GetString("Arrived")), callback_data = $"{QrArrived}:{raid.PublicID}" }); ;
                 var addnRows = SplitButtonsIntoLines(row, maxElementsPerLine: 5, maxCharactersPerLine: 30);
 
                 result.inline_keyboard.AddRange(addnRows);
@@ -615,6 +617,5 @@ namespace PokemonRaidBot.Modules
             }
             return result;
         }
-
     }
 }

@@ -7,8 +7,28 @@
 
   <ItemGroup>
     <None Remove="default-settings.json" />
+    <None Remove="i18n\en-US\LC_MESSAGES\raidbot.mo" />
+    <None Remove="i18n\en-US\LC_MESSAGES\raidbot.po" />
+    <None Remove="i18n\en-US\LC_MESSAGES\raidbot.temp.mo" />
+    <None Remove="i18n\nl-NL\raidbot.mo" />
+    <None Remove="i18n\nl-NL\raidbot.po" />
     <None Remove="settings.debug.json" />
     <None Remove="settings.release.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="i18n\en-US\LC_MESSAGES\raidbot.mo">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="i18n\en-US\LC_MESSAGES\raidbot.po">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="i18n\nl-NL\LC_MESSAGES\raidbot.mo">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="i18n\nl-NL\LC_MESSAGES\raidbot.po">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -24,7 +44,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Botje.Messaging" Version="0.50.1804.28" />
+    <PackageReference Include="Botje.Messaging" Version="0.50.1804.29" />
+    <PackageReference Include="NGettext" Version="0.6.3" />
     <PackageReference Include="Ninject" Version="3.3.4" />
   </ItemGroup>
 

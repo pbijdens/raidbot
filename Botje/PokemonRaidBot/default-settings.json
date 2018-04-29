@@ -1,7 +1,7 @@
 {
     "Timezones": [ "Central European Standard Time", "Europe/Amsterdam", "Europe/Berin", "UTC" ],
     "BotKey": "ENTER YOUR BOT API TOKEN HERE, GET ONE USING BOTFATHER",
-    "AdministratorUsernames": [ "YOURUSERNAME" ],
     "PublicationChannel": "0",
-    "GoogleLocationAPIKey": "PUT YOUR GOOGLE LOCATION API KEY HERE: GET ONE https://developers.google.com/maps/documentation/geocoding/get-api-key"
+    "GoogleLocationAPIKey": "PUT YOUR GOOGLE LOCATION API KEY HERE: GET ONE https://developers.google.com/maps/documentation/geocoding/get-api-key",
+    "Language": "nl-NL"
 }

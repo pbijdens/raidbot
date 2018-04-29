@@ -2,6 +2,7 @@
 using Botje.Messaging.Models;
 using Ninject;
 using PokemonRaidBot.Modules;
+using PokemonRaidBot.Utils;
 using System;
 using System.Linq;
 using System.Text;
@@ -19,6 +20,9 @@ namespace PokemonRaidBot.ChatCommands
         [Inject]
         public IBotModule[] Modules { set { _eventHandler = value.OfType<RaidEventHandler>().FirstOrDefault(); } }
 
+        [Inject]
+        public ITimeService TimeService { get; set; }
+
         public override void ProcessCommand(Source source, Message message, string command, string[] args)
         {
             switch (command)
@@ -33,12 +37,12 @@ namespace PokemonRaidBot.ChatCommands
 
         private void GymInfo(Message message, string[] args)
         {
-            string argstr = args[0];
+            string argstr = args.Length == 1 ? args[0] : "";
 
             Regex re = null;
             if (string.IsNullOrWhiteSpace(argstr))
             {
-                Client.SendMessageToChat(message.Chat.ID, $"Gebruik /gyminfo \"<regex voor naam van de gym>\"", "HTML", true, false, message.MessageID);
+                Client.SendMessageToChat(message.Chat.ID, _HTML_(I18N.GetString($"Use '/gyminfo \"<regex>\"' to obtain statistics about all raids on matching gyms.")), "HTML", true, false, message.MessageID);
                 return;
             }
 
@@ -46,13 +50,13 @@ namespace PokemonRaidBot.ChatCommands
             try
             {
                 var sb = new StringBuilder();
-                sb.AppendLine($"Statistieken voor \"{argstr}\"");
+                sb.AppendLine(I18N.GetString($"Statistics for \"{0}\"", argstr));
                 re = new Regex(argstr, RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
                 var raids = DB.GetCollection<Entities.RaidParticipation>().Find(x => re.IsMatch(x.Raid.Gym)).OrderBy(x => x.Raid.RaidEndTime);
                 foreach (var raid in raids)
                 {
                     int total = raid.NumberOfParticipants();
-                    string line = $"\"{total}\",\"{TimeUtils.AsLocalShortTime(raid.Raid.RaidEndTime)}\",\"{MessageUtils.HtmlEscape(raid.Raid.Gym)}\"";
+                    string line = $"\"{total}\",\"{TimeService.AsLocalShortTime(raid.Raid.RaidEndTime)}\",\"{MessageUtils.HtmlEscape(raid.Raid.Gym)}\"";
                     if (sb.ToString().Length + line.Length > 4094)
                     {
                         Client.SendMessageToChat(message.Chat.ID, sb.ToString(), "HTML", true, false, message.MessageID);
@@ -61,7 +65,7 @@ namespace PokemonRaidBot.ChatCommands
                     }
                     if (sent >= 10) // er zijn grenzen
                     {
-                        Client.SendMessageToChat(message.Chat.ID, "Te veel resultaten.", "HTML", true, false, message.MessageID);
+                        Client.SendMessageToChat(message.Chat.ID, I18N.GetString("Too many results."), "HTML", true, false, message.MessageID);
                         return;
                     }
                     sb.AppendLine(line);
@@ -70,7 +74,8 @@ namespace PokemonRaidBot.ChatCommands
             }
             catch (Exception ex)
             {
-                Client.SendMessageToChat(message.Chat.ID, $"Dat gaat niet goed, is \"{_(argstr)}\" wel een regular expression: {ex.GetType().Name} - {ex.Message}\n{ex.StackTrace}", "HTML", true, false, message.MessageID);
+                string msg = I18N.GetString("An error occurred processing statistics for \"{0}\" (is that even a regular expression?): {1}", _HTML_(argstr), _HTML_(ExceptionUtils.AsString(ex)));
+                Client.SendMessageToChat(message.Chat.ID, msg, "HTML", true, false, message.MessageID);
             }
         }
     }
