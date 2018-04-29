@@ -1,14 +1,13 @@
 ﻿using Botje.Core;
 using Botje.Core.Commands;
 using Botje.Core.Loggers;
-using Botje.Core.Services;
 using Botje.Core.Utils;
 using Botje.DB;
 using Botje.Messaging;
 using Botje.Messaging.PrivateConversation;
-using Botje.Messaging.Services;
 using Botje.Messaging.Telegram;
 using Ninject;
+using PokemonRaidBot.LocationAPI;
 using System;
 using System.Linq;
 using System.Threading;
@@ -52,22 +51,24 @@ namespace PokemonRaidBot
 
             // Set up the console commands
             var helpCommand = new HelpCommand();
-            kernel.Bind<IConsoleCommand>().ToConstant(new ListCommand { }).InSingletonScope();
-            kernel.Bind<IConsoleCommand>().ToConstant(new UpdateCommand { }).InSingletonScope();
-            kernel.Bind<IConsoleCommand>().ToConstant(new ExitCommand { TokenSource = source }).InSingletonScope();
             kernel.Bind<IConsoleCommand>().To<PingCommand>().InSingletonScope();
             kernel.Bind<IConsoleCommand>().To<HelpCommand>().InSingletonScope();
             kernel.Bind<IConsoleCommand>().To<LogLevelCommand>().InSingletonScope();
-            kernel.Bind<IConsoleCommand>().To<TgCommands.MeCommand>().InSingletonScope();
+            kernel.Bind<IConsoleCommand>().ToConstant(new ConsoleCommands.ListCommand { }).InSingletonScope();
+            kernel.Bind<IConsoleCommand>().ToConstant(new ConsoleCommands.UpdateCommand { }).InSingletonScope();
+            kernel.Bind<IConsoleCommand>().ToConstant(new ConsoleCommands.ExitCommand { TokenSource = source }).InSingletonScope();
+            kernel.Bind<IConsoleCommand>().To<ConsoleCommands.MeCommand>().InSingletonScope();
 
             // Set up the components
-            kernel.Bind<IBotModule>().To<RaidBot.RaidCreationWizard>().InSingletonScope();
-            kernel.Bind<IBotModule>().To<RaidBot.RaidEventHandler>().InSingletonScope();
-            kernel.Bind<IBotModule>().To<RaidBot.WhereAmI>().InSingletonScope();
-            kernel.Bind<IBotModule>().To<RaidBot.RaidStatistics>().InSingletonScope();
-            kernel.Bind<IBotModule>().To<RaidBot.Alias>().InSingletonScope();
-            kernel.Bind<IBotModule>().To<RaidBot.Level>().InSingletonScope();
-            kernel.Bind<IBotModule>().To<RaidBot.CleanupChannel>().InSingletonScope();
+            kernel.Bind<IBotModule>().To<Modules.RaidCreationWizard>().InSingletonScope();
+            kernel.Bind<IBotModule>().To<Modules.RaidEventHandler>().InSingletonScope();
+            kernel.Bind<IBotModule>().To<Modules.CleanupChannel>().InSingletonScope();
+
+            kernel.Bind<IBotModule>().To<ChatCommands.WhoAmI>().InSingletonScope();
+            kernel.Bind<IBotModule>().To<ChatCommands.WhereAmI>().InSingletonScope();
+            kernel.Bind<IBotModule>().To<ChatCommands.RaidStatistics>().InSingletonScope();
+            kernel.Bind<IBotModule>().To<ChatCommands.Alias>().InSingletonScope();
+            kernel.Bind<IBotModule>().To<ChatCommands.Level>().InSingletonScope();
 
             var modules = kernel.GetAll<IBotModule>().ToList();
 

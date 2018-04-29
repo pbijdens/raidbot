@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace PokemonRaidBot.RaidBot.Entities
+namespace PokemonRaidBot.Entities
 {
     public class RaidParticipation : IAtom
     {

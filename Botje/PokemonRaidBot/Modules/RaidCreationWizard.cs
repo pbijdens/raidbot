@@ -1,5 +1,4 @@
 ﻿using Botje.Core;
-using Botje.Core.Services;
 using Botje.Core.Utils;
 using Botje.DB;
 using Botje.Messaging;
@@ -7,7 +6,8 @@ using Botje.Messaging.Events;
 using Botje.Messaging.Models;
 using Botje.Messaging.PrivateConversation;
 using Ninject;
-using PokemonRaidBot.RaidBot.Entities;
+using PokemonRaidBot.Entities;
+using PokemonRaidBot.LocationAPI;
 using PokemonRaidBot.RaidBot.Utils;
 using System;
 using System.Collections.Generic;
@@ -15,7 +15,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 
-namespace PokemonRaidBot.RaidBot
+namespace PokemonRaidBot.Modules
 {
     public class RaidCreationWizard : IBotModule
     {

@@ -6,7 +6,7 @@ using System;
 using System.Linq;
 using System.Threading;
 
-namespace PokemonRaidBot.RaidBot
+namespace PokemonRaidBot.Modules
 {
     /// <summary>
     /// Module that removes published raids from the channel.

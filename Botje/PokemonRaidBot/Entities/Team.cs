@@ -1,4 +1,4 @@
-﻿namespace PokemonRaidBot.RaidBot.Entities
+﻿namespace PokemonRaidBot.Entities
 {
     public enum Team : int
     {

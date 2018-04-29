@@ -1,4 +1,4 @@
-﻿using PokemonRaidBot.RaidBot.Entities;
+﻿using PokemonRaidBot.Entities;
 
 namespace PokemonRaidBot.RaidBot.Utils
 {

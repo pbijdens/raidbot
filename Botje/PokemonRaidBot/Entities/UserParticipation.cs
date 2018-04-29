@@ -1,7 +1,7 @@
 ﻿using Botje.Messaging.Models;
 using System;
 
-namespace PokemonRaidBot.RaidBot.Entities
+namespace PokemonRaidBot.Entities
 {
     public class UserParticipation
     {

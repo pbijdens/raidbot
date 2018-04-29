@@ -3,7 +3,7 @@ using Botje.Core.Commands;
 using System;
 using System.Threading;
 
-namespace PokemonRaidBot
+namespace PokemonRaidBot.ConsoleCommands
 {
     public class ExitCommand : ConsoleCommandBase
     {

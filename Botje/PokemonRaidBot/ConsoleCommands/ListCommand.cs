@@ -5,12 +5,12 @@ using Botje.DB;
 using Botje.Messaging;
 using Botje.Messaging.PrivateConversation;
 using Ninject;
-using PokemonRaidBot.RaidBot;
-using PokemonRaidBot.RaidBot.Entities;
+using PokemonRaidBot.Entities;
+using PokemonRaidBot.Modules;
 using System;
 using System.Linq;
 
-namespace PokemonRaidBot
+namespace PokemonRaidBot.ConsoleCommands
 {
     public class ListCommand : ConsoleCommandBase
     {

@@ -5,7 +5,7 @@ using Botje.Messaging.Models;
 using Ninject;
 using System;
 
-namespace PokemonRaidBot.TgCommands
+namespace PokemonRaidBot.ConsoleCommands
 {
     /// <summary>
     /// WHO AM I?!?!?!

@@ -6,7 +6,7 @@ using Botje.Messaging.Events;
 using Botje.Messaging.Models;
 using Botje.Messaging.PrivateConversation;
 using Ninject;
-using PokemonRaidBot.RaidBot.Entities;
+using PokemonRaidBot.Entities;
 using PokemonRaidBot.RaidBot.Utils;
 using System;
 using System.Collections.Generic;
@@ -14,7 +14,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 
-namespace PokemonRaidBot.RaidBot
+namespace PokemonRaidBot.Modules
 {
     public class RaidEventHandler : IBotModule
     {
