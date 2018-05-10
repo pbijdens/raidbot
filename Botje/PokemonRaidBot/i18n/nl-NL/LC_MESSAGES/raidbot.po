@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-04-29 17:13+0200\n"
-"PO-Revision-Date: 2018-04-29 17:13+0200\n"
+"PO-Revision-Date: 2018-05-10 14:37+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: nl_NL\n"
@@ -110,7 +110,7 @@ msgstr "Raid tijd is aangepast."
 
 #: Modules/RaidCreationWizard.cs:123
 msgid "Select a date for this raid from the list below."
-msgstr "Kies aan datum uit de lijst."
+msgstr "Kies een datum uit de lijst."
 
 #: Modules/RaidCreationWizard.cs:127
 msgid "Select a start time."
@@ -125,7 +125,7 @@ msgid ""
 "The raid was created but not published yet. You can publish or share the "
 "raid with the corresponding buttons in the block."
 msgstr ""
-"De raid is aangemaakt, maar nog niet gepubliceerd. Om de raid te dele of "
+"De raid is aangemaakt, maar nog niet gepubliceerd. Om de raid te delen of te "
 "publiceren gebruik je nu de bijbehorende knop."
 
 #: Modules/RaidCreationWizard.cs:144
@@ -268,7 +268,7 @@ msgstr "Bezig met verversen."
 #: Modules/RaidEventHandler.cs:163
 #, csharp-format
 msgid "You will be there at {0}."
-msgstr "Jebent er om {0}."
+msgstr "Je bent er om {0}."
 
 #: Modules/RaidEventHandler.cs:168
 msgid "Error updating time."
@@ -313,7 +313,7 @@ msgstr "portal map"
 
 #: Modules/RaidEventHandler.cs:443
 msgid "Hatches in"
-msgstr "Komt uit over"
+msgstr "Komt uit om"
 
 #: Modules/RaidEventHandler.cs:452
 msgid "Ends"
@@ -477,7 +477,7 @@ msgstr "dd-MM-yy HH:mm"
 
 #: Utils/TimeService.cs:105
 msgid "seconds"
-msgstr "seconde"
+msgstr "secondes"
 
 #: Utils/TimeService.cs:105
 msgid "second"
@@ -493,7 +493,7 @@ msgstr "minuut"
 
 #: Utils/TimeService.cs:107
 msgid "hours"
-msgstr "uur"
+msgstr "uren"
 
 #: Utils/TimeService.cs:107
 msgid "hour"

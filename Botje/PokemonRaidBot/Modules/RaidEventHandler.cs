@@ -506,7 +506,7 @@ namespace PokemonRaidBot.Modules
 
                         if (p.UtcArrived != default(DateTime))
                         {
-                            sb.Append("[" + _HTML_(I18N.GetPluralString("there for {0}", "there for {0}", p.Extra + 1, TimeService.AsReadableTimespan(DateTime.UtcNow - p.UtcArrived))) + "]");
+                            sb.Append(" [" + _HTML_(I18N.GetPluralString("there for {0}", "there for {0}", p.Extra + 1, TimeService.AsReadableTimespan(DateTime.UtcNow - p.UtcArrived))) + "]");
                         }
                         else if (p.UtcWhen != default(DateTime))
                         {
