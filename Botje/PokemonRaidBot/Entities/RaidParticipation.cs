@@ -18,6 +18,8 @@ namespace PokemonRaidBot.Entities
         public Dictionary<Team, List<UserParticipation>> Participants { get; set; }
 
         public List<User> Rejected { get; set; }
+        public List<User> Done { get; set; }
+        public List<User> Maybe { get; set; }
 
         public bool IsPublished { get; set; }
 
@@ -30,6 +32,8 @@ namespace PokemonRaidBot.Entities
                 Participants[team] = new List<UserParticipation>();
             }
             Rejected = new List<User>();
+            Done = new List<User>();
+            Maybe = new List<User>();
         }
 
         internal int NumberOfParticipants()

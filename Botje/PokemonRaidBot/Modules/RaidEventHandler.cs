@@ -31,6 +31,8 @@ namespace PokemonRaidBot.Modules
         private const string QrArrived = "qr.arr"; // qr.aee:{raid}
         private const string QrSetAlignment = "qr.cco"; // qr.cco:{raid}
         private const string QrAlignmentSelected = "qr.als"; // qr.als:{raid}:{teamid}
+        private const string QrDone = "qr.dne"; // qr.dne:{raid}
+        private const string QrMaybe = "qr.myb"; // qr.myb:{raid}
         private const string IqPrefix = "qr-";
 
         [Inject]
@@ -188,6 +190,18 @@ namespace PokemonRaidBot.Modules
                     Client.AnswerCallbackQuery(e.CallbackQuery.ID, _HTML_(I18N.GetString("Thanks. Now please manually refresh the published message.")));
                     UpdateGymAlignment(e.CallbackQuery.From, args[0], team);
                     break;
+                case QrDone: // :raid
+                    _log.Trace($"{e.CallbackQuery.From.DisplayName()} has done raid {args[0]}");
+                    Client.AnswerCallbackQuery(e.CallbackQuery.ID, _HTML_(I18N.GetString("Registered. Thanks.")));
+                    UpdateUserRaidDone(e.CallbackQuery.From, args[0]);
+                    UpdateRaidMessage(e.CallbackQuery.Message?.Chat?.ID, e.CallbackQuery.Message?.MessageID, e.CallbackQuery.InlineMessageId, args[0], e.CallbackQuery.Message?.Chat?.Type);
+                    break;
+                case QrMaybe: // :raid
+                    _log.Trace($"{e.CallbackQuery.From.DisplayName()} has answered 'maybe' for {args[0]}");
+                    Client.AnswerCallbackQuery(e.CallbackQuery.ID, _HTML_(I18N.GetString("Registered. Thanks.")));
+                    UpdateUserRaidMaybe(e.CallbackQuery.From, args[0]);
+                    UpdateRaidMessage(e.CallbackQuery.Message?.Chat?.ID, e.CallbackQuery.Message?.MessageID, e.CallbackQuery.InlineMessageId, args[0], e.CallbackQuery.Message?.Chat?.Type);
+                    break;
             }
         }
 
@@ -234,6 +248,8 @@ namespace PokemonRaidBot.Modules
                 var raid = raidCollection.Find(x => x.PublicID == raidID).First();
                 var userSettings = GetOrCreateUserSettings(user, out _);
                 raid.Rejected.RemoveAll(x => x.ID == user.ID);
+                raid.Done.RemoveAll(x => x.ID == user.ID);
+                raid.Maybe.RemoveAll(x => x.ID == user.ID);
                 UserParticipation participation = null;
                 // If the user's team changed, make sure their data is saved but their participation record
                 // is removed from the 'wrong' faction.
@@ -281,12 +297,54 @@ namespace PokemonRaidBot.Modules
                 var raid = raidCollection.Find(x => x.PublicID == raidID).First();
                 var userSettings = GetOrCreateUserSettings(user, out _);
                 raid.Rejected.RemoveAll(x => x.ID == user.ID);
+                raid.Done.RemoveAll(x => x.ID == user.ID);
+                raid.Maybe.RemoveAll(x => x.ID == user.ID);
                 raid.Participants.ToList().ForEach(kvp =>
                 {
                     kvp.Value.RemoveAll(x => x.User.ID == user.ID);
                 });
                 raid.Rejected.Add(user);
                 raid.Rejected.Sort((x, y) => string.Compare(x.DisplayName(), y.DisplayName()));
+                raidCollection.Update(raid);
+            }
+        }
+
+        private void UpdateUserRaidDone(User user, string raidID)
+        {
+            var raidCollection = DB.GetCollection<RaidParticipation>();
+            lock (_raidLock)
+            {
+                var raid = raidCollection.Find(x => x.PublicID == raidID).First();
+                var userSettings = GetOrCreateUserSettings(user, out _);
+                raid.Rejected.RemoveAll(x => x.ID == user.ID);
+                raid.Done.RemoveAll(x => x.ID == user.ID);
+                raid.Maybe.RemoveAll(x => x.ID == user.ID);
+                raid.Participants.ToList().ForEach(kvp =>
+                {
+                    kvp.Value.RemoveAll(x => x.User.ID == user.ID);
+                });
+                raid.Done.Add(user);
+                raid.Done.Sort((x, y) => string.Compare(x.DisplayName(), y.DisplayName()));
+                raidCollection.Update(raid);
+            }
+        }
+
+        private void UpdateUserRaidMaybe(User user, string raidID)
+        {
+            var raidCollection = DB.GetCollection<RaidParticipation>();
+            lock (_raidLock)
+            {
+                var raid = raidCollection.Find(x => x.PublicID == raidID).First();
+                var userSettings = GetOrCreateUserSettings(user, out _);
+                raid.Rejected.RemoveAll(x => x.ID == user.ID);
+                raid.Done.RemoveAll(x => x.ID == user.ID);
+                raid.Maybe.RemoveAll(x => x.ID == user.ID);
+                raid.Participants.ToList().ForEach(kvp =>
+                {
+                    kvp.Value.RemoveAll(x => x.User.ID == user.ID);
+                });
+                raid.Maybe.Add(user);
+                raid.Maybe.Sort((x, y) => string.Compare(x.DisplayName(), y.DisplayName()));
                 raidCollection.Update(raid);
             }
         }
@@ -461,6 +519,37 @@ namespace PokemonRaidBot.Modules
                 var str = string.Join(", ", naySayers.Select(x => $"{x.ShortName()}"));
                 sb.AppendLine($"<b>" + _HTML_(I18N.GetString("Declined")) + $":</b> {str}");
             }
+
+            var userSettingsCollection = DB.GetCollection<UserSettings>();
+            var undecided = raid.Maybe.Select(x => x).OrderBy(x => x.ShortName());
+            if (undecided.Any())
+            {
+                sb.AppendLine($"");
+                var str = string.Join(", ", undecided.Select(x =>
+                {
+                    string name = x.ShortName().TrimStart('@');
+                    var userRecord = userSettingsCollection.Find(y => y.User.ID == x.ID).FirstOrDefault();
+                    if (!string.IsNullOrWhiteSpace(userRecord?.Alias))
+                    {
+                        name = userRecord.Alias;
+                    }
+                    if (userRecord?.Level > 0)
+                    {
+                        name += $" (" + _HTML_(I18N.GetString("level")) + $" {userRecord?.Level})";
+                    }
+                    return name;
+                }));
+                sb.AppendLine($"<b>" + _HTML_(I18N.GetString("Maybe")) + $":</b> {str}");
+            }
+
+            var alreadyDone = raid.Done.Select(x => x).OrderBy(x => x.ShortName());
+            if (alreadyDone.Any())
+            {
+                sb.AppendLine($"");
+                var str = string.Join(", ", alreadyDone.Select(x => $"{x.ShortName()}"));
+                sb.AppendLine($"<b>" + _HTML_(I18N.GetString("Done")) + $":</b> {str}");
+            }
+
             sb.AppendLine($"\n<i>" + _HTML_(I18N.GetString("In a private chat, use the /level command to set your player level.")) + $"</i>");
 
             sb.AppendLine($"\n#raid updated: <i>{TimeService.AsFullTime(DateTime.UtcNow)}</i>");
@@ -561,6 +650,11 @@ namespace PokemonRaidBot.Modules
                 row.Add(new InlineKeyboardButton { text = _HTML_(I18N.GetString("I +3")), callback_data = $"{QrJoin}:{raid.PublicID}:3" });
                 row.Add(new InlineKeyboardButton { text = _HTML_(I18N.GetString("I +4")), callback_data = $"{QrJoin}:{raid.PublicID}:4" });
                 row.Add(new InlineKeyboardButton { text = _HTML_(I18N.GetString("I +5")), callback_data = $"{QrJoin}:{raid.PublicID}:5" });
+                result.inline_keyboard.Add(row);
+
+                row = new List<InlineKeyboardButton>();
+                row.Add(new InlineKeyboardButton { text = _HTML_(I18N.GetString("Maybe")), callback_data = $"{QrMaybe}:{raid.PublicID}" });
+                row.Add(new InlineKeyboardButton { text = _HTML_(I18N.GetString("Done")), callback_data = $"{QrDone}:{raid.PublicID}" });
                 result.inline_keyboard.Add(row);
 
                 row = new List<InlineKeyboardButton>();

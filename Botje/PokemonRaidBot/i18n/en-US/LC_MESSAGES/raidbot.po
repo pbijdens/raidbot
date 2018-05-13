@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-04-29 17:13+0200\n"
-"PO-Revision-Date: 2018-04-29 17:15+0200\n"
+"POT-Creation-Date: 2018-05-10 14:59+0200\n"
+"PO-Revision-Date: 2018-05-10 15:00+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en_US\n"
@@ -187,21 +187,21 @@ msgstr ""
 "the public channel, or share your raid privately using the share-button."
 
 #: Modules/RaidCreationWizard.cs:403 Modules/RaidCreationWizard.cs:543
-#: Modules/RaidEventHandler.cs:419
+#: Modules/RaidEventHandler.cs:477
 msgid "Raid"
 msgstr "Raid"
 
 #: Modules/RaidCreationWizard.cs:404 Modules/RaidCreationWizard.cs:548
-#: Modules/RaidEventHandler.cs:423
+#: Modules/RaidEventHandler.cs:481
 msgid "Gym"
 msgstr "Gym"
 
 #: Modules/RaidCreationWizard.cs:405 Modules/RaidCreationWizard.cs:553
-#: Modules/RaidEventHandler.cs:427
+#: Modules/RaidEventHandler.cs:485
 msgid "Alignment"
 msgstr "Alignment"
 
-#: Modules/RaidCreationWizard.cs:406 Modules/RaidEventHandler.cs:431
+#: Modules/RaidCreationWizard.cs:406 Modules/RaidEventHandler.cs:489
 msgid "Address"
 msgstr "Address"
 
@@ -221,7 +221,7 @@ msgstr "Available until"
 msgid "Other..."
 msgstr "Other..."
 
-#: Modules/RaidCreationWizard.cs:561 Modules/RaidEventHandler.cs:448
+#: Modules/RaidCreationWizard.cs:561 Modules/RaidEventHandler.cs:506
 msgid "Time"
 msgstr "Time"
 
@@ -233,182 +233,194 @@ msgstr "🗑 Reset"
 msgid "💾 Done"
 msgstr "💾 Done"
 
-#: Modules/RaidEventHandler.cs:91
+#: Modules/RaidEventHandler.cs:93
 #, csharp-format
 msgid "{0} raid at {1} {2}"
 msgstr "{0} raid at {1} {2}"
 
-#: Modules/RaidEventHandler.cs:114
+#: Modules/RaidEventHandler.cs:116
 msgid "Excellent! You arrived."
 msgstr "Excellent! You arrived."
 
-#: Modules/RaidEventHandler.cs:121
+#: Modules/RaidEventHandler.cs:123
 msgid "That's too bad 😞"
 msgstr "That's too bad 😞"
 
-#: Modules/RaidEventHandler.cs:130
+#: Modules/RaidEventHandler.cs:132
 #, csharp-format
 msgid "Joined for team {0}"
 msgstr "Joined for team {0}"
 
-#: Modules/RaidEventHandler.cs:135
+#: Modules/RaidEventHandler.cs:137
 msgid "You're on the list now."
 msgstr "You're on the list now."
 
-#: Modules/RaidEventHandler.cs:148
+#: Modules/RaidEventHandler.cs:150
 msgid "Publishing the raid."
 msgstr "Publishing the raid."
 
-#: Modules/RaidEventHandler.cs:154
+#: Modules/RaidEventHandler.cs:156
 msgid "Refreshing..."
 msgstr "Refreshing..."
 
-#: Modules/RaidEventHandler.cs:163
+#: Modules/RaidEventHandler.cs:165
 #, csharp-format
 msgid "You will be there at {0}."
 msgstr "You will be there at {0}."
 
-#: Modules/RaidEventHandler.cs:168
+#: Modules/RaidEventHandler.cs:170
 msgid "Error updating time."
 msgstr "Error updating time."
 
-#: Modules/RaidEventHandler.cs:174
+#: Modules/RaidEventHandler.cs:176
 msgid "Go to our private chat to update the alignment."
 msgstr "Go to our private chat to update the alignment."
 
-#: Modules/RaidEventHandler.cs:177
+#: Modules/RaidEventHandler.cs:179
 msgid "What's the current gym alignment?"
 msgstr "What's the current gym alignment?"
 
-#: Modules/RaidEventHandler.cs:187
+#: Modules/RaidEventHandler.cs:189
 msgid ""
 "Updated the gym alignment. Manual refresh of the published raid is required."
 msgstr ""
 "Updated the gym alignment. Manual refresh of the published raid is required."
 
-#: Modules/RaidEventHandler.cs:188
+#: Modules/RaidEventHandler.cs:190
 msgid "Thanks. Now please manually refresh the published message."
 msgstr "Thanks. Now please manually refresh the published message."
 
-#: Modules/RaidEventHandler.cs:412
+#: Modules/RaidEventHandler.cs:195 Modules/RaidEventHandler.cs:201
+msgid "Registered. Thanks."
+msgstr "Registered. Thanks."
+
+#: Modules/RaidEventHandler.cs:470
 msgid "Subscribed"
 msgstr "Subscribed"
 
-#: Modules/RaidEventHandler.cs:415
+#: Modules/RaidEventHandler.cs:473
 msgid "Remarks"
 msgstr "Remarks"
 
-#: Modules/RaidEventHandler.cs:438
+#: Modules/RaidEventHandler.cs:496
 msgid "Links"
 msgstr "Links"
 
-#: Modules/RaidEventHandler.cs:438
+#: Modules/RaidEventHandler.cs:496
 msgid "route"
 msgstr "route"
 
-#: Modules/RaidEventHandler.cs:438
+#: Modules/RaidEventHandler.cs:496
 msgid "portal map"
 msgstr "portal map"
 
-#: Modules/RaidEventHandler.cs:443
+#: Modules/RaidEventHandler.cs:501
 msgid "Hatches in"
 msgstr "Hatches in"
 
-#: Modules/RaidEventHandler.cs:452
+#: Modules/RaidEventHandler.cs:510
 msgid "Ends"
 msgstr "Ends"
 
-#: Modules/RaidEventHandler.cs:452
+#: Modules/RaidEventHandler.cs:510
 msgid "in"
 msgstr "in"
 
-#: Modules/RaidEventHandler.cs:462
+#: Modules/RaidEventHandler.cs:520
 msgid "Declined"
 msgstr "Declined"
 
-#: Modules/RaidEventHandler.cs:464
+#: Modules/RaidEventHandler.cs:528 Modules/RaidEventHandler.cs:642
+msgid "Maybe"
+msgstr "Maybe"
+
+#: Modules/RaidEventHandler.cs:536 Modules/RaidEventHandler.cs:643
+msgid "Done"
+msgstr "Done"
+
+#: Modules/RaidEventHandler.cs:539
 msgid "In a private chat, use the /level command to set your player level."
 msgstr "In a private chat, use the /level command to set your player level."
 
-#: Modules/RaidEventHandler.cs:493
+#: Modules/RaidEventHandler.cs:568
 msgid "level"
 msgstr "level"
 
-#: Modules/RaidEventHandler.cs:509
+#: Modules/RaidEventHandler.cs:584
 #, csharp-format
 msgid "there for {0}"
 msgid_plural "there for {0}"
 msgstr[0] "there for {0}"
 msgstr[1] "there for {0}"
 
-#: Modules/RaidEventHandler.cs:533
+#: Modules/RaidEventHandler.cs:608
 msgid "Subscriptions"
 msgstr "Subscriptions"
 
-#: Modules/RaidEventHandler.cs:533
+#: Modules/RaidEventHandler.cs:608
 #, csharp-format
 msgid "{0} player"
 msgid_plural "{0} players"
 msgstr[0] "{0} player"
 msgstr[1] "{0} players"
 
-#: Modules/RaidEventHandler.cs:551
+#: Modules/RaidEventHandler.cs:626
 msgid "Yes"
 msgstr "Yes"
 
-#: Modules/RaidEventHandler.cs:552
+#: Modules/RaidEventHandler.cs:627
 msgid "❤️"
 msgstr "❤️"
 
-#: Modules/RaidEventHandler.cs:553
+#: Modules/RaidEventHandler.cs:628
 msgid "💙"
 msgstr "💙"
 
-#: Modules/RaidEventHandler.cs:554
+#: Modules/RaidEventHandler.cs:629
 msgid "💛"
 msgstr "💛"
 
-#: Modules/RaidEventHandler.cs:555
+#: Modules/RaidEventHandler.cs:630
 msgid "No"
 msgstr "No"
 
-#: Modules/RaidEventHandler.cs:559
+#: Modules/RaidEventHandler.cs:634
 msgid "I +1"
 msgstr "I +1"
 
-#: Modules/RaidEventHandler.cs:560
+#: Modules/RaidEventHandler.cs:635
 msgid "I +2"
 msgstr "I +2"
 
-#: Modules/RaidEventHandler.cs:561
+#: Modules/RaidEventHandler.cs:636
 msgid "I +3"
 msgstr "I +3"
 
-#: Modules/RaidEventHandler.cs:562
+#: Modules/RaidEventHandler.cs:637
 msgid "I +4"
 msgstr "I +4"
 
-#: Modules/RaidEventHandler.cs:563
+#: Modules/RaidEventHandler.cs:638
 msgid "I +5"
 msgstr "I +5"
 
-#: Modules/RaidEventHandler.cs:567
+#: Modules/RaidEventHandler.cs:647
 msgid "🔄"
 msgstr "🔄"
 
-#: Modules/RaidEventHandler.cs:568
+#: Modules/RaidEventHandler.cs:648
 msgid "💟"
 msgstr "💟"
 
-#: Modules/RaidEventHandler.cs:569
+#: Modules/RaidEventHandler.cs:649
 msgid "Share"
 msgstr "Share"
 
-#: Modules/RaidEventHandler.cs:572
+#: Modules/RaidEventHandler.cs:652
 msgid "📣 Publish"
 msgstr "📣 Publish"
 
-#: Modules/RaidEventHandler.cs:589
+#: Modules/RaidEventHandler.cs:669
 msgid "Arrived"
 msgstr "Arrived"
 
@@ -421,12 +433,10 @@ msgid "HH:mm:ss.fff"
 msgstr "HH:mm:ss.fff"
 
 #: Utils/TimeService.cs:63
-#| msgid "januari"
 msgid "January"
 msgstr "January"
 
 #: Utils/TimeService.cs:64
-#| msgid "februari"
 msgid "February"
 msgstr "February"
 
@@ -435,12 +445,10 @@ msgid "March"
 msgstr "March"
 
 #: Utils/TimeService.cs:66
-#| msgid "april"
 msgid "April"
 msgstr "April"
 
 #: Utils/TimeService.cs:67
-#| msgid "day"
 msgid "May"
 msgstr "May"
 
@@ -453,32 +461,26 @@ msgid "July"
 msgstr "July"
 
 #: Utils/TimeService.cs:70
-#| msgid "augustus"
 msgid "August"
 msgstr "August"
 
 #: Utils/TimeService.cs:71
-#| msgid "september"
 msgid "September"
 msgstr "September"
 
 #: Utils/TimeService.cs:72
-#| msgid "oktober"
 msgid "October"
 msgstr "October"
 
 #: Utils/TimeService.cs:73
-#| msgid "november"
 msgid "November"
 msgstr "November"
 
 #: Utils/TimeService.cs:74
-#| msgid "december"
 msgid "December"
 msgstr "December"
 
 #: Utils/TimeService.cs:83
-#| msgid "dd-MM-yy HH:mm"
 msgid "MM-dd-yy HH:mm"
 msgstr "MM-dd-yy HH:mm"
 
