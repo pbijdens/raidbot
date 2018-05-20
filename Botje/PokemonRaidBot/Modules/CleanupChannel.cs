@@ -32,6 +32,9 @@ namespace PokemonRaidBot.Modules
         [Inject]
         public ISettingsManager Settings { get; set; }
 
+        [Inject]
+        public RaidEventHandler RaidEventHandler { get; set; }
+
         /// <summary>
         /// 
         /// </summary>
@@ -60,7 +63,7 @@ namespace PokemonRaidBot.Modules
                 {
                     var collection = DB.GetCollection<Entities.RaidParticipation>();
                     var publishedRaidsForWhichMessagesMustBeDeleted = collection.Find(x => x?.Raid.TelegramMessageID != null && x.Raid?.RaidEndTime <= DateTime.UtcNow).ToArray();
-                    foreach (var rp in publishedRaidsForWhichMessagesMustBeDeleted)
+                    foreach (var rp in publishedRaidsForWhichMessagesMustBeDeleted.ToArray())
                     {
                         try
                         {
@@ -76,6 +79,16 @@ namespace PokemonRaidBot.Modules
                             rp.Raid.TelegramMessageID = null;
                             collection.Update(rp);
                         }
+                    }
+
+                    var publishedRaidsThatNeedUpdating = collection.Find(x => (x != null) && (x.Raid != null) && (x.LastRefresh < x.LastModificationTime) && (DateTime.UtcNow - x.LastRefresh > TimeSpan.FromSeconds(6)) && (x.Raid.TelegramMessageID != null));
+                    foreach (var rp in publishedRaidsThatNeedUpdating.ToArray())
+                    {
+                        _log.Info($"Refreshing message {rp.PublicID} - last refresh {rp.LastRefresh} last edit {rp.LastModificationTime}");
+
+                        rp.LastRefresh = DateTime.UtcNow;
+                        collection.Update(rp);
+                        RaidEventHandler.UpdateRaidMessage(channelID, rp.Raid.TelegramMessageID, null, rp.PublicID, "channel");
                     }
                 }
                 catch (ThreadAbortException)

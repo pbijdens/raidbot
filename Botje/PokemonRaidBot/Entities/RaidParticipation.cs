@@ -9,6 +9,8 @@ namespace PokemonRaidBot.Entities
 {
     public class RaidParticipation : IAtom
     {
+        public static object Lock = new object(); // global lock, bit too broad should be per raid, but okay as long as we don't have hundreds of raids at a time.
+
         public Guid UniqueID { get; set; }
 
         public string PublicID { get; set; }
@@ -18,10 +20,16 @@ namespace PokemonRaidBot.Entities
         public Dictionary<Team, List<UserParticipation>> Participants { get; set; }
 
         public List<User> Rejected { get; set; }
+
         public List<User> Done { get; set; }
+
         public List<User> Maybe { get; set; }
 
         public bool IsPublished { get; set; }
+
+        public DateTime LastRefresh { get; set; }
+
+        public DateTime LastModificationTime { get; set; }
 
         public RaidParticipation()
         {

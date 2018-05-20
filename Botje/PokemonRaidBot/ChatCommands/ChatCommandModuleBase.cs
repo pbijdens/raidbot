@@ -6,7 +6,6 @@ using Botje.Messaging.Events;
 using Botje.Messaging.Models;
 using NGettext;
 using Ninject;
-using PokemonRaidBot.Entities;
 using System;
 using System.Linq;
 
@@ -94,22 +93,6 @@ namespace PokemonRaidBot.ChatCommands
                     var args = CommandLineUtils.SplitArgs(message.Text.Substring(firstEntity.Length).Trim()).ToArray();
                     ProcessCommand(source, message, command, args);
                 }
-            }
-        }
-
-        public static object UserSettingsLock = new object();
-        protected UserSettings GetOrCreateUserSettings(User user, out DbSet<UserSettings> userSettingsCollection)
-        {
-            lock (UserSettingsLock)
-            {
-                userSettingsCollection = DB.GetCollection<UserSettings>();
-                var result = userSettingsCollection.Find(x => x.User.ID == user.ID).FirstOrDefault();
-                if (result == null)
-                {
-                    result = new UserSettings { User = user };
-                    userSettingsCollection.Insert(result);
-                }
-                return result;
             }
         }
 

@@ -21,16 +21,14 @@ namespace PokemonRaidBot.Modules
     public class RaidEventHandler : IBotModule
     {
         private ILogger _log;
-        private object _raidLock = new object(); // TODO: too broad, should be per raid but it'll do for now
 
+        public const string QrPublish = "qr.pub"; // qr.pub:{raid}
         private const string QrJoin = "qr.joi"; // qr.joi:{raid}:{extra}:{team}
         private const string QrDecline = "qr.dec"; // qr.dec:{raid}
         private const string QrRefresh = "qr.ref"; // qr.ref:{raid}
-        private const string QrPublish = "qr.pub"; // qr.pub:{raid}
         private const string QrSetTime = "qr.sti"; // qr.sti:{raid}:{ticks}
         private const string QrArrived = "qr.arr"; // qr.aee:{raid}
-        private const string QrSetAlignment = "qr.cco"; // qr.cco:{raid}
-        private const string QrAlignmentSelected = "qr.als"; // qr.als:{raid}:{teamid}
+        private const string QrEdit = "qr.edt"; // qr.aee:{raid}
         private const string QrDone = "qr.dne"; // qr.dne:{raid}
         private const string QrMaybe = "qr.myb"; // qr.myb:{raid}
         private const string IqPrefix = "qr-";
@@ -56,6 +54,9 @@ namespace PokemonRaidBot.Modules
 
         [Inject]
         public IPrivateConversationManager ConversationManager { get; set; }
+
+        [Inject]
+        public RaidEditor RaidEditor { get; set; }
 
         public void Shutdown()
         {
@@ -116,13 +117,13 @@ namespace PokemonRaidBot.Modules
                     Client.AnswerCallbackQuery(e.CallbackQuery.ID, _HTML_(I18N.GetString("Excellent! You arrived.")));
                     UpdateUserRaidJoinOrUpdateAttendance(e.CallbackQuery.From, args[0]);
                     UpdateUserRaidArrived(e.CallbackQuery.From, args[0]);
-                    UpdateRaidMessage(e.CallbackQuery.Message?.Chat?.ID, e.CallbackQuery.Message?.MessageID, e.CallbackQuery.InlineMessageId, args[0], e.CallbackQuery.Message?.Chat?.Type);
+                    RequestUpdateRaidMessage(e.CallbackQuery.Message?.Chat?.ID, e.CallbackQuery.Message?.MessageID, e.CallbackQuery.InlineMessageId, args[0], e.CallbackQuery.Message?.Chat?.Type);
                     break;
                 case QrDecline: // :raid
                     _log.Trace($"{e.CallbackQuery.From.DisplayName()} has declined for raid {args[0]}");
                     Client.AnswerCallbackQuery(e.CallbackQuery.ID, _HTML_(I18N.GetString("That's too bad 😞")));
                     UpdateUserRaidNegative(e.CallbackQuery.From, args[0]);
-                    UpdateRaidMessage(e.CallbackQuery.Message?.Chat?.ID, e.CallbackQuery.Message?.MessageID, e.CallbackQuery.InlineMessageId, args[0], e.CallbackQuery.Message?.Chat?.Type);
+                    RequestUpdateRaidMessage(e.CallbackQuery.Message?.Chat?.ID, e.CallbackQuery.Message?.MessageID, e.CallbackQuery.InlineMessageId, args[0], e.CallbackQuery.Message?.Chat?.Type);
                     break;
                 case QrJoin: // :raid:extra:team
                     _log.Trace($"{e.CallbackQuery.From.DisplayName()} will join raid {args[0]} [{e.CallbackQuery.Data}]");
@@ -143,18 +144,18 @@ namespace PokemonRaidBot.Modules
                     {
                         UpdateUserRaidExtra(e.CallbackQuery.From, args[0], extra);
                     }
-                    UpdateRaidMessage(e.CallbackQuery.Message?.Chat?.ID, e.CallbackQuery.Message?.MessageID, e.CallbackQuery.InlineMessageId, args[0], e.CallbackQuery.Message?.Chat?.Type);
+                    RequestUpdateRaidMessage(e.CallbackQuery.Message?.Chat?.ID, e.CallbackQuery.Message?.MessageID, e.CallbackQuery.InlineMessageId, args[0], e.CallbackQuery.Message?.Chat?.Type);
                     break;
                 case QrPublish: // :raid
                     _log.Info($"{e.CallbackQuery.From.DisplayName()} published raid {args[0]}");
                     Client.AnswerCallbackQuery(e.CallbackQuery.ID, _HTML_(I18N.GetString("Publishing the raid.")));
                     PublishRaid(e.CallbackQuery.From, args[0]);
-                    UpdateRaidMessage(e.CallbackQuery.Message?.Chat?.ID, e.CallbackQuery.Message?.MessageID, e.CallbackQuery.InlineMessageId, args[0], e.CallbackQuery.Message?.Chat?.Type);
+                    RequestUpdateRaidMessage(e.CallbackQuery.Message?.Chat?.ID, e.CallbackQuery.Message?.MessageID, e.CallbackQuery.InlineMessageId, args[0], e.CallbackQuery.Message?.Chat?.Type);
                     break;
                 case QrRefresh: // :raid
                     _log.Trace($"{e.CallbackQuery.From.DisplayName()} refreshed {args[0]}");
                     Client.AnswerCallbackQuery(e.CallbackQuery.ID, _HTML_(I18N.GetString("Refreshing...")));
-                    UpdateRaidMessage(e.CallbackQuery.Message?.Chat?.ID, e.CallbackQuery.Message?.MessageID, e.CallbackQuery.InlineMessageId, args[0], e.CallbackQuery.Message?.Chat?.Type);
+                    RequestUpdateRaidMessage(e.CallbackQuery.Message?.Chat?.ID, e.CallbackQuery.Message?.MessageID, e.CallbackQuery.InlineMessageId, args[0], e.CallbackQuery.Message?.Chat?.Type);
                     break;
                 case QrSetTime: // :raid:ticks
                     UpdateUserRaidJoinOrUpdateAttendance(e.CallbackQuery.From, args[0]);
@@ -169,84 +170,35 @@ namespace PokemonRaidBot.Modules
                     {
                         Client.AnswerCallbackQuery(e.CallbackQuery.ID, _HTML_(I18N.GetString("Error updating time.")));
                     }
-                    UpdateRaidMessage(e.CallbackQuery.Message?.Chat?.ID, e.CallbackQuery.Message?.MessageID, e.CallbackQuery.InlineMessageId, args[0], e.CallbackQuery.Message?.Chat?.Type);
+                    RequestUpdateRaidMessage(e.CallbackQuery.Message?.Chat?.ID, e.CallbackQuery.Message?.MessageID, e.CallbackQuery.InlineMessageId, args[0], e.CallbackQuery.Message?.Chat?.Type);
                     break;
-                case QrSetAlignment: // :{raid}
-                    _log.Trace($"{e.CallbackQuery.From.DisplayName()} wants to change the gym alignment {args[0]}");
-                    Client.AnswerCallbackQuery(e.CallbackQuery.ID, _HTML_(I18N.GetString("Go to our private chat to update the alignment.")));
-                    try
-                    {
-                        Client.SendMessageToChat(e.CallbackQuery.From.ID, _HTML_(I18N.GetString("What's the current gym alignment?")), "HTML", true, true, null, CreateAlignmentMenu(args[0]));
-                    }
-                    catch (Exception ex)
-                    {
-                        _log.Warn($"User {e.CallbackQuery.From.ID} tried to change the gym-alignment but couldn't becasue of error {ex.GetType().Name} - {ex.Message}.");
-                    }
-                    break;
-                case QrAlignmentSelected: // :{raid}:{alignment}
-                    var team = (Team)Int32.Parse(args[1]);
-                    _log.Info($"{e.CallbackQuery.From.DisplayName()} changed the gym alignment for {args[0]} to {team}");
-                    Client.EditMessageText($"{e.CallbackQuery.Message.Chat.ID}", e.CallbackQuery.Message.MessageID, null, _HTML_(I18N.GetString("Updated the gym alignment. Manual refresh of the published raid is required.")));
-                    Client.AnswerCallbackQuery(e.CallbackQuery.ID, _HTML_(I18N.GetString("Thanks. Now please manually refresh the published message.")));
-                    UpdateGymAlignment(e.CallbackQuery.From, args[0], team);
+                case QrEdit: // :{raid}
+                    _log.Info($"{e.CallbackQuery.From.DisplayName()} wants to edit raid {args[0]}");
+                    Client.AnswerCallbackQuery(e.CallbackQuery.ID, _HTML_(I18N.GetString("Go to our private chat to edit the raid.")));
+                    RaidEditor.EditRaid(e.CallbackQuery.From, args[0]);
                     break;
                 case QrDone: // :raid
                     _log.Trace($"{e.CallbackQuery.From.DisplayName()} has done raid {args[0]}");
                     Client.AnswerCallbackQuery(e.CallbackQuery.ID, _HTML_(I18N.GetString("Registered. Thanks.")));
                     UpdateUserRaidDone(e.CallbackQuery.From, args[0]);
-                    UpdateRaidMessage(e.CallbackQuery.Message?.Chat?.ID, e.CallbackQuery.Message?.MessageID, e.CallbackQuery.InlineMessageId, args[0], e.CallbackQuery.Message?.Chat?.Type);
+                    RequestUpdateRaidMessage(e.CallbackQuery.Message?.Chat?.ID, e.CallbackQuery.Message?.MessageID, e.CallbackQuery.InlineMessageId, args[0], e.CallbackQuery.Message?.Chat?.Type);
                     break;
                 case QrMaybe: // :raid
                     _log.Trace($"{e.CallbackQuery.From.DisplayName()} has answered 'maybe' for {args[0]}");
                     Client.AnswerCallbackQuery(e.CallbackQuery.ID, _HTML_(I18N.GetString("Registered. Thanks.")));
                     UpdateUserRaidMaybe(e.CallbackQuery.From, args[0]);
-                    UpdateRaidMessage(e.CallbackQuery.Message?.Chat?.ID, e.CallbackQuery.Message?.MessageID, e.CallbackQuery.InlineMessageId, args[0], e.CallbackQuery.Message?.Chat?.Type);
+                    RequestUpdateRaidMessage(e.CallbackQuery.Message?.Chat?.ID, e.CallbackQuery.Message?.MessageID, e.CallbackQuery.InlineMessageId, args[0], e.CallbackQuery.Message?.Chat?.Type);
                     break;
             }
-        }
-
-        private void UpdateGymAlignment(User from, string raidPublicID, Team team)
-        {
-            var raidCollection = DB.GetCollection<RaidParticipation>();
-            lock (_raidLock)
-            {
-                var raid = raidCollection.Find(x => x.PublicID == raidPublicID).First();
-                if (null != raid)
-                {
-                    raid.Raid.Alignment = team;
-                    raidCollection.Update(raid);
-                }
-            }
-        }
-
-        private InlineKeyboardMarkup CreateAlignmentMenu(string raidPublicID)
-        {
-            InlineKeyboardMarkup result = new InlineKeyboardMarkup();
-            result.inline_keyboard = new List<List<InlineKeyboardButton>>();
-
-            List<InlineKeyboardButton> row;
-
-            foreach (var value in Enum.GetValues(typeof(Team)).OfType<Team>())
-            {
-                row = new List<InlineKeyboardButton>();
-                row.Add(new InlineKeyboardButton
-                {
-                    text = $"{value.AsReadableString()}",
-                    callback_data = $"{QrAlignmentSelected}:{raidPublicID}:{(int)value}"
-                });
-                result.inline_keyboard.Add(row);
-            }
-
-            return result;
         }
 
         private void UpdateUserRaidJoinOrUpdateAttendance(User user, string raidID)
         {
             var raidCollection = DB.GetCollection<RaidParticipation>();
-            lock (_raidLock)
+            lock (RaidParticipation.Lock)
             {
                 var raid = raidCollection.Find(x => x.PublicID == raidID).First();
-                var userSettings = GetOrCreateUserSettings(user, out _);
+                var userSettings = UserSettings.GetOrCreateUserSettings(user, DB.GetCollection<UserSettings>());
                 raid.Rejected.RemoveAll(x => x.ID == user.ID);
                 raid.Done.RemoveAll(x => x.ID == user.ID);
                 raid.Maybe.RemoveAll(x => x.ID == user.ID);
@@ -273,29 +225,13 @@ namespace PokemonRaidBot.Modules
             }
         }
 
-        private object _userSettingsLock = new object();
-        private UserSettings GetOrCreateUserSettings(User user, out DbSet<UserSettings> userSettingsCollection)
-        {
-            lock (_userSettingsLock)
-            {
-                userSettingsCollection = DB.GetCollection<UserSettings>();
-                var result = userSettingsCollection.Find(x => x.User.ID == user.ID).FirstOrDefault();
-                if (result == null)
-                {
-                    result = new UserSettings { User = user };
-                    userSettingsCollection.Insert(result);
-                }
-                return result;
-            }
-        }
-
         private void UpdateUserRaidNegative(User user, string raidID)
         {
             var raidCollection = DB.GetCollection<RaidParticipation>();
-            lock (_raidLock)
+            lock (RaidParticipation.Lock)
             {
                 var raid = raidCollection.Find(x => x.PublicID == raidID).First();
-                var userSettings = GetOrCreateUserSettings(user, out _);
+                var userSettings = UserSettings.GetOrCreateUserSettings(user, DB.GetCollection<UserSettings>());
                 raid.Rejected.RemoveAll(x => x.ID == user.ID);
                 raid.Done.RemoveAll(x => x.ID == user.ID);
                 raid.Maybe.RemoveAll(x => x.ID == user.ID);
@@ -312,10 +248,10 @@ namespace PokemonRaidBot.Modules
         private void UpdateUserRaidDone(User user, string raidID)
         {
             var raidCollection = DB.GetCollection<RaidParticipation>();
-            lock (_raidLock)
+            lock (RaidParticipation.Lock)
             {
                 var raid = raidCollection.Find(x => x.PublicID == raidID).First();
-                var userSettings = GetOrCreateUserSettings(user, out _);
+                var userSettings = UserSettings.GetOrCreateUserSettings(user, DB.GetCollection<UserSettings>());
                 raid.Rejected.RemoveAll(x => x.ID == user.ID);
                 raid.Done.RemoveAll(x => x.ID == user.ID);
                 raid.Maybe.RemoveAll(x => x.ID == user.ID);
@@ -332,10 +268,10 @@ namespace PokemonRaidBot.Modules
         private void UpdateUserRaidMaybe(User user, string raidID)
         {
             var raidCollection = DB.GetCollection<RaidParticipation>();
-            lock (_raidLock)
+            lock (RaidParticipation.Lock)
             {
                 var raid = raidCollection.Find(x => x.PublicID == raidID).First();
-                var userSettings = GetOrCreateUserSettings(user, out _);
+                var userSettings = UserSettings.GetOrCreateUserSettings(user, DB.GetCollection<UserSettings>());
                 raid.Rejected.RemoveAll(x => x.ID == user.ID);
                 raid.Done.RemoveAll(x => x.ID == user.ID);
                 raid.Maybe.RemoveAll(x => x.ID == user.ID);
@@ -352,10 +288,10 @@ namespace PokemonRaidBot.Modules
         private void UpdateUserRaidArrived(User user, string raidID)
         {
             var raidCollection = DB.GetCollection<RaidParticipation>();
-            lock (_raidLock)
+            lock (RaidParticipation.Lock)
             {
                 var raid = raidCollection.Find(x => x.PublicID == raidID).First();
-                var userSettings = GetOrCreateUserSettings(user, out _);
+                var userSettings = UserSettings.GetOrCreateUserSettings(user, DB.GetCollection<UserSettings>());
                 var participation = raid.Participants[userSettings.Team].Where(x => x.User.ID == user.ID).FirstOrDefault();
                 if (null != participation)
                 {
@@ -369,10 +305,10 @@ namespace PokemonRaidBot.Modules
         private void UpdateUserRaidExtra(User user, string raidID, int extra)
         {
             var raidCollection = DB.GetCollection<RaidParticipation>();
-            lock (_raidLock)
+            lock (RaidParticipation.Lock)
             {
                 var raid = raidCollection.Find(x => x.PublicID == raidID).First();
-                var userSettings = GetOrCreateUserSettings(user, out _);
+                var userSettings = UserSettings.GetOrCreateUserSettings(user, DB.GetCollection<UserSettings>());
                 var participation = raid.Participants[userSettings.Team].Where(x => x.User.ID == user.ID).FirstOrDefault();
                 if (null != participation)
                 {
@@ -385,10 +321,10 @@ namespace PokemonRaidBot.Modules
         private void UpdateUserRaidTime(User user, string raidID, DateTime utcWhen)
         {
             var raidCollection = DB.GetCollection<RaidParticipation>();
-            lock (_raidLock)
+            lock (RaidParticipation.Lock)
             {
                 var raid = raidCollection.Find(x => x.PublicID == raidID).First();
-                var userSettings = GetOrCreateUserSettings(user, out _);
+                var userSettings = UserSettings.GetOrCreateUserSettings(user, DB.GetCollection<UserSettings>());
                 var participation = raid.Participants[userSettings.Team].Where(x => x.User.ID == user.ID).FirstOrDefault();
                 if (null != participation)
                 {
@@ -401,7 +337,8 @@ namespace PokemonRaidBot.Modules
 
         private void UpdateUserSettingsForTeam(User user, Team team)
         {
-            var userSettings = GetOrCreateUserSettings(user, out var userSettingsCollection);
+            var userSettingsCollection = DB.GetCollection<UserSettings>();
+            var userSettings = UserSettings.GetOrCreateUserSettings(user, userSettingsCollection);
             userSettings.Team = team;
             userSettingsCollection.Update(userSettings);
         }
@@ -421,7 +358,30 @@ namespace PokemonRaidBot.Modules
             }
         }
 
-        private void UpdateRaidMessage(long? chatID, long? messageID, string inlineMessageId, string raidID, string chatType)
+        public void RequestUpdateRaidMessage(long? chatID, long? messageID, string inlineMessageId, string raidID, string chatType)
+        {
+            var raidCollection = DB.GetCollection<RaidParticipation>();
+            var raid = raidCollection.Find(x => x.PublicID == raidID).FirstOrDefault();
+            if (null == raid)
+            {
+                _log.Error($"Got update request for raid {raidID}, but I can't find it");
+                return;
+            }
+
+            lock (RaidParticipation.Lock)
+            {
+                // For purposes of updating the channel, update these items
+                raid.LastModificationTime = DateTime.UtcNow;
+                raidCollection.Update(raid);
+            }
+
+            if (chatType != "channel")
+            {
+                UpdateRaidMessage(chatID, messageID, inlineMessageId, raidID, chatType);
+            }
+        }
+
+        public void UpdateRaidMessage(long? chatID, long? messageID, string inlineMessageId, string raidID, string chatType)
         {
             var raidCollection = DB.GetCollection<RaidParticipation>();
             var raid = raidCollection.Find(x => x.PublicID == raidID).FirstOrDefault();
@@ -655,16 +615,16 @@ namespace PokemonRaidBot.Modules
                 row = new List<InlineKeyboardButton>();
                 row.Add(new InlineKeyboardButton { text = _HTML_(I18N.GetString("Maybe")), callback_data = $"{QrMaybe}:{raid.PublicID}" });
                 row.Add(new InlineKeyboardButton { text = _HTML_(I18N.GetString("Done")), callback_data = $"{QrDone}:{raid.PublicID}" });
-                result.inline_keyboard.Add(row);
-
-                row = new List<InlineKeyboardButton>();
-                row.Add(new InlineKeyboardButton { text = _HTML_(I18N.GetString("🔄")), callback_data = $"{QrRefresh}:{raid.PublicID}" });
-                row.Add(new InlineKeyboardButton { text = _HTML_(I18N.GetString("💟")), callback_data = $"{QrSetAlignment}:{raid.PublicID}" });
-                row.Add(new InlineKeyboardButton { text = _HTML_(I18N.GetString("Share")), switch_inline_query = $"{shareString}" });
                 if (!raid.IsPublished)
                 {
                     row.Add(new InlineKeyboardButton { text = _HTML_(I18N.GetString("📣 Publish")), callback_data = $"{QrPublish}:{raid.PublicID}" });
                 }
+                result.inline_keyboard.Add(row);
+
+                row = new List<InlineKeyboardButton>();
+                row.Add(new InlineKeyboardButton { text = _HTML_(I18N.GetString("🔄")), callback_data = $"{QrRefresh}:{raid.PublicID}" });
+                row.Add(new InlineKeyboardButton { text = _HTML_(I18N.GetString("✏️")), callback_data = $"{QrEdit}:{raid.PublicID}" });
+                row.Add(new InlineKeyboardButton { text = _HTML_(I18N.GetString("Share")), switch_inline_query = $"{shareString}" });
                 result.inline_keyboard.Add(row);
 
                 row = new List<InlineKeyboardButton>();

@@ -77,6 +77,7 @@ namespace PokemonRaidBot
 
             // Set up the components
             kernel.Bind<IBotModule>().To<Modules.RaidCreationWizard>().InSingletonScope();
+            kernel.Bind<IBotModule>().To<Modules.RaidEditor>().InSingletonScope();
             kernel.Bind<IBotModule>().To<Modules.RaidEventHandler>().InSingletonScope();
             kernel.Bind<IBotModule>().To<Modules.CleanupChannel>().InSingletonScope();
 

@@ -22,10 +22,11 @@ namespace PokemonRaidBot.ChatCommands
 
         private void DoLevelCommand(Message message, string command, string[] args)
         {
-            var userSetting = GetOrCreateUserSettings(message.From, out DbSet<UserSettings> dbSetUserSettings);
+            DbSet<UserSettings> dbSetUserSettings = DB.GetCollection<UserSettings>();
+            var userSetting = UserSettings.GetOrCreateUserSettings(message.From, dbSetUserSettings);
             if (args.Length != 0)
             {
-                lock (UserSettingsLock)
+                lock (UserSettings.UserSettingsLock)
                 {
                     int.TryParse(args[0], out int level);
                     if (level < 0 || level > 40)

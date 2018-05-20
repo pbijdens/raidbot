@@ -128,7 +128,8 @@ namespace PokemonRaidBot.Modules
                     break;
                 case CbqOtherDateTimeSelected:
                     Client.AnswerCallbackQuery(e.CallbackQuery.ID, _HTML_(I18N.GetString("Raid time updated.")));
-                    UpdateTime(e.CallbackQuery.From, int.Parse(e.CallbackQuery.Data.Split(':')[1]), int.Parse(e.CallbackQuery.Data.Split(':')[2]));
+                    var args = e.CallbackQuery.Data.Split(':');
+                    UpdateTime(e.CallbackQuery.From, int.Parse(args[1]), int.Parse(args[2]), int.Parse(args[3]));
                     ShowMenu(e.CallbackQuery.From);
                     break;
                 case CbqClear:
@@ -142,29 +143,14 @@ namespace PokemonRaidBot.Modules
                     break;
                 case CbqPlayerTeamSelected:
                     Client.AnswerCallbackQuery(e.CallbackQuery.ID, _HTML_(I18N.GetString("If you say so.")));
-                    var userSettings = GetOrCreateUserSettings(e.CallbackQuery.From, out var userSettingsCollection);
+                    DbSet<UserSettings> userSettingsCollection = DB.GetCollection<UserSettings>();
+                    var userSettings = UserSettings.GetOrCreateUserSettings(e.CallbackQuery.From, userSettingsCollection);
                     var team = (Team)(int.Parse(e.CallbackQuery.Data.Split(':')[1]));
                     userSettings.Team = team;
                     userSettingsCollection.Update(userSettings);
                     string msg = I18N.GetString("Your new team is {0}.", _HTML_(team.AsReadableString()));
                     Client.SendMessageToChat(e.CallbackQuery.From.ID, msg, "HTML", true, true);
                     break;
-            }
-        }
-
-        private object _userSettingsLock = new object();
-        private UserSettings GetOrCreateUserSettings(User user, out DbSet<UserSettings> userSettingsCollection)
-        {
-            lock (_userSettingsLock)
-            {
-                userSettingsCollection = DB.GetCollection<UserSettings>();
-                var result = userSettingsCollection.Find(x => x.User.ID == user.ID).FirstOrDefault();
-                if (result == null)
-                {
-                    result = new UserSettings { User = user };
-                    userSettingsCollection.Insert(result);
-                }
-                return result;
             }
         }
 
@@ -206,8 +192,12 @@ namespace PokemonRaidBot.Modules
             }
             else if (e.Message.Location != null) // getting a location message, update the current raid
             {
-                UpdateLocation(e.Message.From, e.Message.Location);
-                ShowMenu(e.Message.From);
+                string state = ConversationManager.GetState(e.Message.From);
+                if (state != "qe.state.expect.location")
+                {
+                    UpdateLocation(e.Message.From, e.Message.Location);
+                    ShowMenu(e.Message.From);
+                }
             }
             else
             {
@@ -342,11 +332,11 @@ namespace PokemonRaidBot.Modules
             collection.Update(record);
         }
 
-        private void UpdateTime(User user, int daysFromToday, int hour)
+        private void UpdateTime(User user, int daysFromToday, int hour, int minutes)
         {
             GetOrCreateRaidDescriptionForUser(user, out DbSet<RaidDescription> collection, out RaidDescription record);
             DateTime whenDate = DateTime.UtcNow + TimeSpan.FromDays(daysFromToday);
-            DateTime raidStartTime = TimeUtils.ToUTC(new DateTime(whenDate.Year, whenDate.Month, whenDate.Day, hour, 0, 0));
+            DateTime raidStartTime = TimeUtils.ToUTC(new DateTime(whenDate.Year, whenDate.Month, whenDate.Day, hour, minutes, 0));
             record.RaidUnlockTime = raidStartTime;
             record.RaidEndTime = raidStartTime + TimeSpan.FromMinutes(RaidDurationInMinutes);
             collection.Update(record);
@@ -496,9 +486,10 @@ namespace PokemonRaidBot.Modules
         private InlineKeyboardMarkup CreateTimeMenu(int daysFromNow)
         {
             List<InlineKeyboardButton> buttons = new List<InlineKeyboardButton>();
-            for (int i = 0; i < 24; i++)
+            for (int i = 7; i < 21; i++)
             {
-                buttons.Add(new InlineKeyboardButton { text = $"{i}:00", callback_data = $"{CbqOtherDateTimeSelected}:{daysFromNow}:{i}" });
+                buttons.Add(new InlineKeyboardButton { text = $"{i}:00", callback_data = $"{CbqOtherDateTimeSelected}:{daysFromNow}:{i}:00" });
+                buttons.Add(new InlineKeyboardButton { text = $"{i}:30", callback_data = $"{CbqOtherDateTimeSelected}:{daysFromNow}:{i}:30" });
             }
 
             InlineKeyboardMarkup result = new InlineKeyboardMarkup();
