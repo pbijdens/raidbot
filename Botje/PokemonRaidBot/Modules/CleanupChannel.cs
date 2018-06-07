@@ -62,7 +62,11 @@ namespace PokemonRaidBot.Modules
                 try
                 {
                     var collection = DB.GetCollection<Entities.RaidParticipation>();
-                    var publishedRaidsForWhichMessagesMustBeDeleted = collection.Find(x => x?.Raid.TelegramMessageID != null && x.Raid?.RaidEndTime <= DateTime.UtcNow).ToArray();
+                    var raidList = collection.FindAll().ToArray();
+
+                    // TODO: Delete raids that have been published automatically to other channels
+
+                    var publishedRaidsForWhichMessagesMustBeDeleted = raidList.Where(x => x?.Raid.TelegramMessageID != null && x.Raid?.RaidEndTime <= DateTime.UtcNow).ToArray();
                     foreach (var rp in publishedRaidsForWhichMessagesMustBeDeleted.ToArray())
                     {
                         try
@@ -81,7 +85,7 @@ namespace PokemonRaidBot.Modules
                         }
                     }
 
-                    var publishedRaidsThatNeedUpdating = collection.Find(x => (x != null) && (x.Raid != null) && (x.LastRefresh < x.LastModificationTime) && (DateTime.UtcNow - x.LastRefresh > TimeSpan.FromSeconds(6)) && (x.Raid.TelegramMessageID != null));
+                    var publishedRaidsThatNeedUpdating = raidList.Where(x => (x != null) && (x.Raid != null) && (x.LastRefresh < x.LastModificationTime) && (DateTime.UtcNow - x.LastRefresh > TimeSpan.FromSeconds(6)) && (x.Raid.TelegramMessageID != null));
                     foreach (var rp in publishedRaidsThatNeedUpdating.ToArray())
                     {
                         _log.Info($"Refreshing message {rp.PublicID} - last refresh {rp.LastRefresh} last edit {rp.LastModificationTime}");

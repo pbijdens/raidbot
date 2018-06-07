@@ -16,6 +16,7 @@ namespace PokemonRaidBot
             public string GoogleLocationAPIKey { get; set; }
             public string DataFolder { get; set; }
             public string Language { get; set; }
+            public List<PogoAfoMapping> PogoAfoMappings { get; set; }
         }
 
         private Settings _settings;
@@ -31,6 +32,8 @@ namespace PokemonRaidBot
         public string DataFolder => _settings.DataFolder;
 
         public string Language => _settings.Language;
+
+        public List<PogoAfoMapping> PogoAfoMappings => _settings?.PogoAfoMappings ?? new List<PogoAfoMapping>();
 
         public void Read(string filename, string fallback)
         {

@@ -412,7 +412,7 @@ namespace PokemonRaidBot.Modules
             ShareRaidToChat(raid, from.ID);
         }
 
-        private Message ShareRaidToChat(RaidParticipation raid, long chatID)
+        internal Message ShareRaidToChat(RaidParticipation raid, long chatID)
         {
             string text = CreateRaidText(raid);
             InlineKeyboardMarkup markup = CreateMarkupFor(raid);
@@ -453,7 +453,15 @@ namespace PokemonRaidBot.Modules
             {
                 string lat = raid.Raid.Location.Latitude.ToString(CultureInfo.InvariantCulture);
                 string lon = raid.Raid.Location.Longitude.ToString(CultureInfo.InvariantCulture);
-                sb.AppendLine($"<b>" + _HTML_(I18N.GetString("Links")) + $":</b> (<a href=\"https://www.google.com/maps/?daddr={lat},{lon}\">" + _HTML_(I18N.GetString("route")) + $"</a>, <a href=\"https://ingress.com/intel?ll={lat},{lon}&z=17\">" + _HTML_(I18N.GetString("portal map")) + $"</a>)");
+                string externalurls = "";
+                if (raid.Raid.Sources != null)
+                {
+                    foreach (var source in raid.Raid.Sources.Where(x => !string.IsNullOrEmpty(x.URL)).ToArray())
+                    {
+                        externalurls += $"<a href=\"{source.URL}\">" + _HTML_(source.SourceID) + $"</a>, ";
+                    }
+                }
+                sb.AppendLine($"<b>" + _HTML_(I18N.GetString("Links")) + $":</b> ({externalurls}<a href=\"https://www.google.com/maps/?daddr={lat},{lon}\">" + _HTML_(I18N.GetString("route")) + $"</a>, <a href=\"https://ingress.com/intel?ll={lat},{lon}&z=17\">" + _HTML_(I18N.GetString("portal map")) + $"</a>)");
             }
 
             if (raid.Raid.RaidUnlockTime != default(DateTime) && raid.Raid.RaidUnlockTime >= DateTime.UtcNow)
@@ -510,7 +518,7 @@ namespace PokemonRaidBot.Modules
                 sb.AppendLine($"<b>" + _HTML_(I18N.GetString("Done")) + $":</b> {str}");
             }
 
-            sb.AppendLine($"\n<i>" + _HTML_(I18N.GetString("In a private chat, use the /level command to set your player level.")) + $"</i>");
+            //sb.AppendLine($"\n<i>" + _HTML_(I18N.GetString("In a private chat, use the /level command to set your player level.")) + $"</i>");
 
             sb.AppendLine($"\n#raid updated: <i>{TimeService.AsFullTime(DateTime.UtcNow)}</i>");
             return sb.ToString();
@@ -576,11 +584,12 @@ namespace PokemonRaidBot.Modules
             var tpsSub = string.Join(" ", tpsElements);
             tps = $"{counter} ({tpsSub})";
 
-            if (counter > 0)
-            {
-                sb.AppendLine($"");
-                sb.AppendLine($"<b>" + _HTML_(I18N.GetString("Subscriptions")) + $":</b> " + _HTML_(I18N.GetPluralString("{0} player", "{0} players", counter, counter)));
-            }
+            //Removed, alredy summarised at the top of the message
+            //if (counter > 0)
+            //{
+            //    sb.AppendLine($"");
+            //    sb.AppendLine($"<b>" + _HTML_(I18N.GetString("Subscriptions")) + $":</b> " + _HTML_(I18N.GetPluralString("{0} player", "{0} players", counter, counter)));
+            //}
         }
 
         private InlineKeyboardMarkup CreateMarkupFor(RaidParticipation raid)
@@ -613,19 +622,19 @@ namespace PokemonRaidBot.Modules
                 result.inline_keyboard.Add(row);
 
                 row = new List<InlineKeyboardButton>();
-                row.Add(new InlineKeyboardButton { text = _HTML_(I18N.GetString("Maybe")), callback_data = $"{QrMaybe}:{raid.PublicID}" });
-                row.Add(new InlineKeyboardButton { text = _HTML_(I18N.GetString("Done")), callback_data = $"{QrDone}:{raid.PublicID}" });
-                if (!raid.IsPublished)
-                {
-                    row.Add(new InlineKeyboardButton { text = _HTML_(I18N.GetString("📣 Publish")), callback_data = $"{QrPublish}:{raid.PublicID}" });
-                }
-                result.inline_keyboard.Add(row);
-
-                row = new List<InlineKeyboardButton>();
                 row.Add(new InlineKeyboardButton { text = _HTML_(I18N.GetString("🔄")), callback_data = $"{QrRefresh}:{raid.PublicID}" });
                 row.Add(new InlineKeyboardButton { text = _HTML_(I18N.GetString("✏️")), callback_data = $"{QrEdit}:{raid.PublicID}" });
+                row.Add(new InlineKeyboardButton { text = _HTML_(I18N.GetString("Maybe")), callback_data = $"{QrMaybe}:{raid.PublicID}" });
+                row.Add(new InlineKeyboardButton { text = _HTML_(I18N.GetString("Done")), callback_data = $"{QrDone}:{raid.PublicID}" });
                 row.Add(new InlineKeyboardButton { text = _HTML_(I18N.GetString("Share")), switch_inline_query = $"{shareString}" });
                 result.inline_keyboard.Add(row);
+
+                if (!raid.IsPublished)
+                {
+                    row = new List<InlineKeyboardButton>();
+                    row.Add(new InlineKeyboardButton { text = _HTML_(I18N.GetString("📣 Publish")), callback_data = $"{QrPublish}:{raid.PublicID}" });
+                    result.inline_keyboard.Add(row);
+                }
 
                 row = new List<InlineKeyboardButton>();
                 var dtStart = DateTime.UtcNow;
