@@ -88,6 +88,7 @@ namespace PokemonRaidBot.Modules
                     {
                         try
                         {
+                            _log.Trace($"Checking {map.Url}");
                             HttpWebRequest req = (HttpWebRequest)WebRequest.Create(map.Url);
                             HttpWebResponse response = (HttpWebResponse)req.GetResponse();
                             if (response.StatusCode == HttpStatusCode.OK)
@@ -99,6 +100,8 @@ namespace PokemonRaidBot.Modules
                                         string responseString = sr.ReadToEnd();
                                         if (!string.IsNullOrWhiteSpace(responseString))
                                         {
+                                            _log.Trace($"Response: {responseString}");
+
                                             var x = Pokedex.All.FirstOrDefault();
                                             var pogoAfoResult = Newtonsoft.Json.JsonConvert.DeserializeObject<PogoAfoResult>(responseString);
                                             if (string.IsNullOrWhiteSpace(pogoAfoResult.error))
@@ -152,7 +155,11 @@ namespace PokemonRaidBot.Modules
             foreach (var entry in pogoAfoResult.raids ?? new Dictionary<string, PogoAfoRaidInfo>())
             {
                 // TODO: Should be part of the query already, why ask for items then discard them?
-                if (entry.Value.raid_level < 5 || !entry.Value.ex_trigger) continue;
+                if (entry.Value.raid_level < 5 && !entry.Value.ex_trigger)
+                {
+                    _log.Trace($"{SourceID} - Ignoring raid {entry.Key} @{entry.Value.raid_battle} level: {entry.Value.raid_level} / trigger: {entry.Value.ex_trigger} / pokémon: {entry.Value.raid_pokemon_id} / gym: {entry.Value.name} / url: {entry.Value.url}");
+                    continue;
+                }
 
                 _log.Info($"{SourceID} - Incoming raid {entry.Key} @{entry.Value.raid_battle} / pokémon: {entry.Value.raid_pokemon_id} / gym: {entry.Value.name} / url: {entry.Value.url}");
 
