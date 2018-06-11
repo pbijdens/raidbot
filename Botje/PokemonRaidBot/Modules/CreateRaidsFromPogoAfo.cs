@@ -276,7 +276,10 @@ namespace PokemonRaidBot.Modules
                         Longitude = entry.Value.longitude.Value
                     };
                     updated = true;
+                }
 
+                if (string.IsNullOrEmpty(raidStruct.Raid.Address))
+                {
                     UpdateAddress(raidParticipationCollection, raidStruct, raidStruct.Raid.Location);
                 }
 

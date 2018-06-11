@@ -436,11 +436,11 @@ namespace PokemonRaidBot.Modules
                 {
                     timestr += TimeService.AsShortTime(raid.Raid.RaidUnlockTime);
                 }
-                else if (raid.Raid.RaidUnlockTime >= DateTime.UtcNow)
+                else if (raid.Raid.RaidUnlockTime != default(DateTime) && raid.Raid.RaidUnlockTime < DateTime.UtcNow)
                 {
                     timestr += I18N.GetString("now");
                 }
-                if (!(raid.Raid.RaidEndTime == default(DateTime) || raid.Raid.RaidEndTime < DateTime.UtcNow))
+                if (raid.Raid.RaidEndTime != default(DateTime) && raid.Raid.RaidEndTime >= DateTime.UtcNow)
                 {
                     timestr += (timestr.Length > 0 ? "-" : "") + TimeService.AsShortTime(raid.Raid.RaidEndTime);
                 }
