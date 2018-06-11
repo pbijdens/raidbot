@@ -13,8 +13,9 @@
     <None Remove="i18n\nl-NL\raidbot.mo" />
     <None Remove="i18n\nl-NL\raidbot.po" />
     <None Remove="pokemon-list.json" />
+    <None Remove="settings.amersfoort.json" />
     <None Remove="settings.debug.json" />
-    <None Remove="settings.release.json" />
+    <None Remove="settings.hoevelaken.json" />
   </ItemGroup>
 
   <ItemGroup>
@@ -39,10 +40,13 @@
     <Content Include="pokemon-list.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="settings.hoevelaken.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="settings.debug.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="settings.release.json">
+    <Content Include="settings.amersfoort.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

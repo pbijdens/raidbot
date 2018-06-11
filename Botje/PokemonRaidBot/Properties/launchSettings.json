@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "PokemonRaidBot": {
+      "commandName": "Project",
+      "commandLineArgs": "settings.debug.json"
+    }
+  }
+}

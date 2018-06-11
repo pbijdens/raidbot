@@ -21,14 +21,17 @@ namespace PokemonRaidBot
     {
         static void Main(string[] args)
         {
-            var settings = new JsonSettingsReader();
 
-            // These two settings files are excluded for the GIT solution
-#if DEBUG
-            settings.Read("settings.debug.json", "default-settings.json");
-#else
-            settings.Read("settings.release.json", "default-settings.json");
-#endif
+            var settings = new JsonSettingsReader();
+            if (args.Length == 0)
+            {
+                settings.Read("settings.debug.json");
+            }
+            else
+            {
+                settings.Read(args[0]);
+            }
+
             TimeUtils.Initialize(settings.Timezones);
 
             var kernel = new StandardKernel();
@@ -81,6 +84,7 @@ namespace PokemonRaidBot
             kernel.Bind<IBotModule>().To<Modules.RaidEventHandler>().InSingletonScope();
             kernel.Bind<IBotModule>().To<Modules.CleanupChannel>().InSingletonScope();
             kernel.Bind<IBotModule>().To<Modules.CreateRaidsFromPogoAfo>().InSingletonScope();
+            kernel.Bind<IBotModule>().To<Modules.SummarizeActiveRaids>().InSingletonScope();
 
             kernel.Bind<IBotModule>().To<ChatCommands.WhoAmI>().InSingletonScope();
             kernel.Bind<IBotModule>().To<ChatCommands.WhereAmI>().InSingletonScope();

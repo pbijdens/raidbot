@@ -106,7 +106,7 @@ namespace PokemonRaidBot.Modules
                                             var pogoAfoResult = Newtonsoft.Json.JsonConvert.DeserializeObject<PogoAfoResult>(responseString);
                                             if (string.IsNullOrWhiteSpace(pogoAfoResult.error))
                                             {
-                                                CreateRaidsFromScanResult(pogoAfoResult, map.Channel);
+                                                CreateRaidsFromScanResult(map, pogoAfoResult, map.Channel);
                                             }
                                             else
                                             {
@@ -148,7 +148,7 @@ namespace PokemonRaidBot.Modules
             _log.Info($"Stopped worker thread for {nameof(CleanupChannel)}");
         }
 
-        private void CreateRaidsFromScanResult(PogoAfoResult pogoAfoResult, long channel)
+        private void CreateRaidsFromScanResult(PogoAfoMapping map, PogoAfoResult pogoAfoResult, long channel)
         {
             var raidParticipationCollection = DB.GetCollection<RaidParticipation>();
             var raidsList = raidParticipationCollection.FindAll().ToArray();
@@ -159,6 +159,15 @@ namespace PokemonRaidBot.Modules
                 {
                     _log.Trace($"{SourceID} - Ignoring raid {entry.Key} @{entry.Value.raid_battle} level: {entry.Value.raid_level} / trigger: {entry.Value.ex_trigger} / pokémon: {entry.Value.raid_pokemon_id} / gym: {entry.Value.name} / url: {entry.Value.url}");
                     continue;
+                }
+
+                if (map.NorthEastCorner != null && map.SouthWestCorner != null && entry.Value.latitude.HasValue && entry.Value.longitude.HasValue)
+                {
+                    if (!(Between(entry.Value.latitude.Value, map.NorthEastCorner.Latitude, map.SouthWestCorner.Latitude) && Between(entry.Value.longitude.Value, map.NorthEastCorner.Longitude, map.SouthWestCorner.Longitude)))
+                    {
+                        _log.Trace($"{SourceID} - Ignoring raid {entry.Key} @{entry.Value.raid_battle} based on location, it's outside my area of interest.");
+                        continue;
+                    }
                 }
 
                 _log.Info($"{SourceID} - Incoming raid {entry.Key} @{entry.Value.raid_battle} / pokémon: {entry.Value.raid_pokemon_id} / gym: {entry.Value.name} / url: {entry.Value.url}");
@@ -173,6 +182,7 @@ namespace PokemonRaidBot.Modules
                     _log.Info($"Found existing raid with same external ID: pokémon: {entry.Value.raid_pokemon_id} / gym: {entry.Value.name} / url: {entry.Value.url} === id: {raidStruct.PublicID} / {raidStruct.Raid.Raid} / {raidStruct.Raid.Gym}");
                 }
 
+                bool updated = false;
                 // search for a PUBLISHED raid that's similar in location and time
                 if (null == raidStruct)
                 {
@@ -200,6 +210,8 @@ namespace PokemonRaidBot.Modules
                 // Create a new raid
                 if (null == raidStruct)
                 {
+                    updated = true;
+
                     _log.Info($"{SourceID} - Adding new raid {entry.Key} @{entry.Value.raid_battle} / pokémon: {entry.Value.raid_pokemon_id} / gym: {entry.Value.name} / url: {entry.Value.url}");
                     raidStruct = new RaidParticipation
                     {
@@ -222,6 +234,7 @@ namespace PokemonRaidBot.Modules
                 }
 
                 // update raidStruct
+                string currentValue = raidStruct.Raid.Raid;
                 if (entry.Value.raid_pokemon_id != null)
                 {
                     var pokedexEntry = Pokedex.All.Where(x => x.id == entry.Value.raid_pokemon_id).FirstOrDefault();
@@ -238,13 +251,15 @@ namespace PokemonRaidBot.Modules
                 {
                     raidStruct.Raid.Raid = $"Level {entry.Value.raid_level} raid";
                 }
+                if (currentValue != raidStruct.Raid.Raid) updated = true;
 
-                raidStruct.Raid.RaidUnlockTime = raidStartTime.UtcDateTime;
-                raidStruct.Raid.RaidEndTime = raidEndTime.UtcDateTime;
-                raidStruct.Raid.Gym = entry.Value.name;
+                if (raidStruct.Raid.RaidUnlockTime != raidStartTime.UtcDateTime) { raidStruct.Raid.RaidUnlockTime = raidStartTime.UtcDateTime; updated = true; }
+                if (raidStruct.Raid.RaidEndTime != raidEndTime.UtcDateTime) { raidStruct.Raid.RaidEndTime = raidEndTime.UtcDateTime; updated = true; }
+                if (raidStruct.Raid.Gym != entry.Value.name) { raidStruct.Raid.Gym = entry.Value.name; updated = true; }
                 if (entry.Value.ex_trigger && string.IsNullOrEmpty(raidStruct.Raid.Remarks))
                 {
                     raidStruct.Raid.Remarks = $"EX Raid Trigger";
+                    updated = true;
                 }
 
                 if (raidStruct.Raid.Publications == null)
@@ -252,36 +267,50 @@ namespace PokemonRaidBot.Modules
                     raidStruct.Raid.Publications = new List<PublicationEntry>();
                 }
 
-                if (!raidStruct.Raid.Publications.Where(x => x.ChannelID == channel).Any())
-                {
-                    _log.Info($"{SourceID} - Publishing {entry.Key} @{entry.Value.raid_battle} / pokémon: {entry.Value.raid_pokemon_id} / gym: {entry.Value.name} / url: {entry.Value.url}");
-                    var message = RaidEventHandler.ShareRaidToChat(raidStruct, channel);
-                    if (channel == Settings.PublicationChannel)
-                    {
-                        raidStruct.Raid.TelegramMessageID = message.MessageID;
-                        raidStruct.IsPublished = true;
-                    }
-                    raidStruct.Raid.Publications.Add(new PublicationEntry
-                    {
-                        ChannelID = channel,
-                        TelegramMessageID = message.MessageID
-                    });
-                }
 
-                if (entry.Value.longitude.HasValue && entry.Value.latitude.HasValue)
+                if (entry.Value.longitude.HasValue && entry.Value.latitude.HasValue && (null == raidStruct.Raid.Location || raidStruct.Raid.Location.Latitude != entry.Value.latitude.Value || raidStruct.Raid.Location.Longitude != entry.Value.longitude.Value))
                 {
                     raidStruct.Raid.Location = new Location
                     {
                         Latitude = entry.Value.latitude.Value,
                         Longitude = entry.Value.longitude.Value
                     };
+                    updated = true;
+
+                    UpdateAddress(raidParticipationCollection, raidStruct, raidStruct.Raid.Location);
                 }
 
-                UpdateAddress(raidParticipationCollection, raidStruct, raidStruct.Raid.Location);
+                if (updated)
+                {
+                    if (!raidStruct.Raid.Publications.Where(x => x.ChannelID == channel).Any())
+                    {
+                        _log.Info($"{SourceID} - Publishing {entry.Key} @{entry.Value.raid_battle} / pokémon: {entry.Value.raid_pokemon_id} / gym: {entry.Value.name} / url: {entry.Value.url}");
+                        var message = RaidEventHandler.ShareRaidToChat(raidStruct, channel);
+                        if (channel == Settings.PublicationChannel)
+                        {
+                            raidStruct.Raid.TelegramMessageID = message?.MessageID;
+                            raidStruct.IsPublished = true;
+                        }
+                        raidStruct.Raid.Publications.Add(new PublicationEntry
+                        {
+                            ChannelID = channel,
+                            TelegramMessageID = message?.MessageID ?? long.MaxValue
+                        });
+                    }
 
-                raidStruct.LastModificationTime = DateTime.UtcNow;
-                raidParticipationCollection.Update(raidStruct);
+                    raidStruct.LastModificationTime = DateTime.UtcNow;
+                    raidParticipationCollection.Update(raidStruct);
+                }
+                else
+                {
+                    _log.Info($"Nothing changed for raid {raidStruct.PublicID}, not updating anything.");
+                }
             }
+        }
+
+        private bool Between(double value, double v1, double v2)
+        {
+            return (value >= v1 && value <= v2) || (value >= v2 && value <= v1);
         }
 
         private void UpdateAddress(DbSet<RaidParticipation> raidCollection, RaidParticipation raid, Location location)

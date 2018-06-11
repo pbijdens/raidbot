@@ -35,9 +35,9 @@ namespace PokemonRaidBot
 
         public List<PogoAfoMapping> PogoAfoMappings => _settings?.PogoAfoMappings ?? new List<PogoAfoMapping>();
 
-        public void Read(string filename, string fallback)
+        public void Read(string filename)
         {
-            string json = File.ReadAllText(File.Exists(filename) ? filename : fallback);
+            string json = File.ReadAllText(filename);
             _settings = Newtonsoft.Json.JsonConvert.DeserializeObject<Settings>(json);
         }
     }

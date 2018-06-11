@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Botje.Messaging.Models;
+using System.Collections.Generic;
 
 namespace PokemonRaidBot
 {
@@ -6,6 +7,8 @@ namespace PokemonRaidBot
     {
         public string Url { get; set; }
         public long Channel { get; set; }
+        public Location NorthEastCorner { get; set; }
+        public Location SouthWestCorner { get; set; }
     }
 
     /// <summary>
