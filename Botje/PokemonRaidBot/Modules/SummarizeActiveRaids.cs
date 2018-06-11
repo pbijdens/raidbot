@@ -20,6 +20,8 @@ namespace PokemonRaidBot.Modules
     /// </summary>
     public class SummarizeActiveRaids : IBotModule
     {
+        public static bool NewRaidPosted = false;
+
         public static TimeSpan Interval = TimeSpan.FromSeconds(10);
 
         private static CancellationTokenSource _cts = new CancellationTokenSource();
@@ -115,40 +117,52 @@ namespace PokemonRaidBot.Modules
                         var hash = HashUtils.CalculateSHA1Hash(message.ToString());
                         if (!string.Equals(hash, updateRecord.Hash) /*|| (DateTime.UtcNow - updateRecord.LastModificationDate > TimeSpan.FromSeconds(60))*/)
                         {
-                            if (updateRecord.MessageID != long.MaxValue)
+                            if (NewRaidPosted || updateRecord.MessageID == long.MaxValue)
                             {
+                                NewRaidPosted = false;
+
+                                // A new message was posted or the summary was never posted yet, delete the current message and posty a new summary
+                                if (updateRecord.MessageID != long.MaxValue)
+                                {
+                                    try
+                                    {
+                                        Client.DeleteMessage(channel, updateRecord.MessageID);
+                                        updateRecord.MessageID = long.MaxValue;
+                                        updateRecord.Hash = hash;
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        _log.Warn(ex, $"Could not delete summary-message {updateRecord.MessageID} from channel {channel}");
+                                    }
+                                }
+
                                 try
                                 {
-                                    Client.DeleteMessage(channel, updateRecord.MessageID);
-                                    updateRecord.MessageID = long.MaxValue;
-                                    updateRecord.Hash = hash;
+                                    var postedMessage = Client.SendMessageToChat(channel, message.ToString(), "HTML", true, true, null, null);
+                                    if (null != postedMessage)
+                                    {
+                                        updateRecord.MessageID = postedMessage.MessageID;
+                                    }
+                                    else
+                                    {
+                                        _log.Warn($"Could not post summary-message to channel {channel} - null reply");
+                                    }
                                 }
                                 catch (Exception ex)
                                 {
-                                    _log.Warn(ex, $"Could not delete summary-message {updateRecord.MessageID} from channel {channel}");
+                                    _log.Warn(ex, $"Could not post summary-message to channel {channel}");
                                 }
                             }
-
-                            try
+                            else if (updateRecord.MessageID != long.MaxValue)
                             {
-                                var postedMessage = Client.SendMessageToChat(channel, message.ToString(), "HTML", true, true, null, null);
-                                if (null != postedMessage)
-                                {
-                                    updateRecord.MessageID = postedMessage.MessageID;
-                                }
-                                else
-                                {
-                                    _log.Warn($"Could not post summary-message to channel {channel} - null reply");
-                                }
+                                // There is no new raid posted, so update the current one
+                                Client.EditMessageText($"{channel}", updateRecord.MessageID, null, message.ToString(), "HTML", true, null, "channel");
+                                updateRecord.Hash = hash;
                             }
-                            catch (Exception ex)
-                            {
-                                _log.Warn(ex, $"Could not post summary-message to channel {channel}");
-                            }
-
-                            updateRecord.LastModificationDate = DateTime.UtcNow;
-                            DB.GetCollection<ChannelUpdateMessage>().Update(updateRecord);
                         }
+
+                        updateRecord.LastModificationDate = DateTime.UtcNow;
+                        DB.GetCollection<ChannelUpdateMessage>().Update(updateRecord);
                     }
                 }
                 catch (ThreadAbortException)

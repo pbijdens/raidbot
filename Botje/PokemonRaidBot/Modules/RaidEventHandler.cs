@@ -417,6 +417,10 @@ namespace PokemonRaidBot.Modules
             string text = CreateRaidText(raid);
             InlineKeyboardMarkup markup = CreateMarkupFor(raid);
             var message = Client.SendMessageToChat(chatID, text, "HTML", true, true, null, markup);
+
+            // Requires the summary to be re-posted
+            SummarizeActiveRaids.NewRaidPosted = true;
+
             return message;
         }
 

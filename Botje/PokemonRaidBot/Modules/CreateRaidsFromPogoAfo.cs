@@ -170,7 +170,7 @@ namespace PokemonRaidBot.Modules
                     }
                 }
 
-                _log.Info($"{SourceID} - Incoming raid {entry.Key} @{entry.Value.raid_battle} / pokémon: {entry.Value.raid_pokemon_id} / gym: {entry.Value.name} / url: {entry.Value.url}");
+                _log.Trace($"{SourceID} - Incoming raid {entry.Key} @{entry.Value.raid_battle} / pokémon: {entry.Value.raid_pokemon_id} / gym: {entry.Value.name} / url: {entry.Value.url}");
 
                 DateTimeOffset raidStartTime = entry.Value.raid_battle.HasValue ? DateTimeOffset.FromUnixTimeSeconds(entry.Value.raid_battle ?? 0) : DateTimeOffset.MinValue;
                 DateTimeOffset raidEndTime = entry.Value.raid_end.HasValue ? DateTimeOffset.FromUnixTimeSeconds(entry.Value.raid_end ?? 0) : DateTimeOffset.MinValue;
@@ -179,7 +179,7 @@ namespace PokemonRaidBot.Modules
                 var raidStruct = raidsList.Where(x => (x.Raid.Sources != null) && (x.Raid.Sources.Where(s => s.SourceID == SourceID && s.ExternalID == entry.Key).Any())).FirstOrDefault();
                 if (null != raidStruct)
                 {
-                    _log.Info($"Found existing raid with same external ID: pokémon: {entry.Value.raid_pokemon_id} / gym: {entry.Value.name} / url: {entry.Value.url} === id: {raidStruct.PublicID} / {raidStruct.Raid.Raid} / {raidStruct.Raid.Gym}");
+                    _log.Trace($"Found existing raid with same external ID: pokémon: {entry.Value.raid_pokemon_id} / gym: {entry.Value.name} / url: {entry.Value.url} === id: {raidStruct.PublicID} / {raidStruct.Raid.Raid} / {raidStruct.Raid.Gym}");
                 }
 
                 bool updated = false;
@@ -203,7 +203,7 @@ namespace PokemonRaidBot.Modules
 
                     if (null != raidStruct)
                     {
-                        _log.Info($"Merging raid pokémon: {entry.Value.raid_pokemon_id} / gym: {entry.Value.name} / url: {entry.Value.url} with existing raid id: {raidStruct.PublicID} / {raidStruct.Raid.Raid} / {raidStruct.Raid.Gym}");
+                        _log.Trace($"Merging raid pokémon: {entry.Value.raid_pokemon_id} / gym: {entry.Value.name} / url: {entry.Value.url} with existing raid id: {raidStruct.PublicID} / {raidStruct.Raid.Raid} / {raidStruct.Raid.Gym}");
                     }
                 }
 
@@ -212,7 +212,7 @@ namespace PokemonRaidBot.Modules
                 {
                     updated = true;
 
-                    _log.Info($"{SourceID} - Adding new raid {entry.Key} @{entry.Value.raid_battle} / pokémon: {entry.Value.raid_pokemon_id} / gym: {entry.Value.name} / url: {entry.Value.url}");
+                    _log.Trace($"{SourceID} - Adding new raid {entry.Key} @{entry.Value.raid_battle} / pokémon: {entry.Value.raid_pokemon_id} / gym: {entry.Value.name} / url: {entry.Value.url}");
                     raidStruct = new RaidParticipation
                     {
                         Raid = new RaidDescription
@@ -287,7 +287,7 @@ namespace PokemonRaidBot.Modules
                 {
                     if (!raidStruct.Raid.Publications.Where(x => x.ChannelID == channel).Any())
                     {
-                        _log.Info($"{SourceID} - Publishing {entry.Key} @{entry.Value.raid_battle} / pokémon: {entry.Value.raid_pokemon_id} / gym: {entry.Value.name} / url: {entry.Value.url}");
+                        _log.Trace($"{SourceID} - Publishing {entry.Key} @{entry.Value.raid_battle} / pokémon: {entry.Value.raid_pokemon_id} / gym: {entry.Value.name} / url: {entry.Value.url}");
                         var message = RaidEventHandler.ShareRaidToChat(raidStruct, channel);
                         if (channel == Settings.PublicationChannel)
                         {
@@ -306,7 +306,7 @@ namespace PokemonRaidBot.Modules
                 }
                 else
                 {
-                    _log.Info($"Nothing changed for raid {raidStruct.PublicID}, not updating anything.");
+                    _log.Trace($"Nothing changed for raid {raidStruct.PublicID}, not updating anything.");
                 }
             }
         }

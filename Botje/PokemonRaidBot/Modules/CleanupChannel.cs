@@ -71,7 +71,7 @@ namespace PokemonRaidBot.Modules
                     {
                         try
                         {
-                            _log.Info($"Deleting message with ID {rp.Raid.TelegramMessageID.Value} from the raid channel {channelID} for raid {rp.PublicID} because the raid ended at {rp.Raid.RaidEndTime} (UTC) and it's {DateTime.UtcNow} (UTC) now.");
+                            _log.Trace($"Deleting message with ID {rp.Raid.TelegramMessageID.Value} from the raid channel {channelID} for raid {rp.PublicID} because the raid ended at {rp.Raid.RaidEndTime} (UTC) and it's {DateTime.UtcNow} (UTC) now.");
                             Client.DeleteMessage(channelID, rp.Raid.TelegramMessageID.Value);
                         }
                         catch (Exception ex)
@@ -88,7 +88,7 @@ namespace PokemonRaidBot.Modules
                     var publishedRaidsThatNeedUpdating = raidList.Where(x => (x != null) && (x.Raid != null) && (x.LastRefresh < x.LastModificationTime) && (DateTime.UtcNow - x.LastRefresh > TimeSpan.FromSeconds(6)) && (x.Raid.TelegramMessageID != null));
                     foreach (var rp in publishedRaidsThatNeedUpdating.ToArray())
                     {
-                        _log.Info($"Refreshing message {rp.PublicID} - last refresh {rp.LastRefresh} last edit {rp.LastModificationTime}");
+                        _log.Trace($"Refreshing message {rp.PublicID} - last refresh {rp.LastRefresh} last edit {rp.LastModificationTime}");
 
                         rp.LastRefresh = DateTime.UtcNow;
                         collection.Update(rp);
