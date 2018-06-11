@@ -427,18 +427,33 @@ namespace PokemonRaidBot.Modules
 
             StringBuilder sb = new StringBuilder();
 
-            sb.AppendLine($"<b>" + _HTML_(I18N.GetString("Subscribed")) + $":</b> {tps}");
+            // sb.AppendLine($"<b>" + _HTML_(I18N.GetString("Subscribed")) + $":</b> {tps}");
+            if (!string.IsNullOrWhiteSpace(raid.Raid.Gym))
+            {
+                string timestr = "";
+
+                if (raid.Raid.RaidUnlockTime != default(DateTime) && raid.Raid.RaidUnlockTime >= DateTime.UtcNow)
+                {
+                    timestr += TimeService.AsShortTime(raid.Raid.RaidUnlockTime);
+                }
+                else if (raid.Raid.RaidUnlockTime >= DateTime.UtcNow)
+                {
+                    timestr += I18N.GetString("now");
+                }
+                if (!(raid.Raid.RaidEndTime == default(DateTime) || raid.Raid.RaidEndTime < DateTime.UtcNow))
+                {
+                    timestr += (timestr.Length > 0 ? "-" : "") + TimeService.AsShortTime(raid.Raid.RaidEndTime);
+                }
+
+                sb.AppendLine($"<b>{MessageUtils.HtmlEscape(raid.Raid.Gym)} ({raid.NumberOfParticipants()} - {timestr})</b>");
+            }
             if (!string.IsNullOrWhiteSpace(raid.Raid.Remarks))
             {
-                sb.AppendLine($"<b>" + _HTML_(I18N.GetString("Remarks")) + $":</b> {MessageUtils.HtmlEscape(raid.Raid.Remarks)}");
+                sb.AppendLine($"{MessageUtils.HtmlEscape(raid.Raid.Remarks)}");
             }
             if (!string.IsNullOrWhiteSpace(raid.Raid.Raid))
             {
                 sb.AppendLine($"<b>" + _HTML_(I18N.GetString("Raid")) + $":</b> {MessageUtils.HtmlEscape(raid.Raid.Raid)}");
-            }
-            if (!string.IsNullOrWhiteSpace(raid.Raid.Gym))
-            {
-                sb.AppendLine($"<b>" + _HTML_(I18N.GetString("Gym")) + $":</b> {MessageUtils.HtmlEscape(raid.Raid.Gym)}");
             }
             if (raid.Raid.Alignment != Team.Unknown)
             {
@@ -464,19 +479,19 @@ namespace PokemonRaidBot.Modules
                 sb.AppendLine($"<b>" + _HTML_(I18N.GetString("Links")) + $":</b> ({externalurls}<a href=\"https://www.google.com/maps/?daddr={lat},{lon}\">" + _HTML_(I18N.GetString("route")) + $"</a>, <a href=\"https://ingress.com/intel?ll={lat},{lon}&z=17\">" + _HTML_(I18N.GetString("portal map")) + $"</a>)");
             }
 
-            if (raid.Raid.RaidUnlockTime != default(DateTime) && raid.Raid.RaidUnlockTime >= DateTime.UtcNow)
-            {
-                sb.AppendLine($"<b>" + _HTML_(I18N.GetString("Hatches in")) + $":</b> {TimeService.AsShortTime(raid.Raid.RaidUnlockTime)} (over {TimeService.AsReadableTimespan(raid.Raid.RaidUnlockTime - DateTime.UtcNow)})");
-            }
+            //if (raid.Raid.RaidUnlockTime != default(DateTime) && raid.Raid.RaidUnlockTime >= DateTime.UtcNow)
+            //{
+            //    sb.AppendLine($"<b>" + _HTML_(I18N.GetString("Hatches in")) + $":</b> {TimeService.AsShortTime(raid.Raid.RaidUnlockTime)} (over {TimeService.AsReadableTimespan(raid.Raid.RaidUnlockTime - DateTime.UtcNow)})");
+            //}
 
-            if (raid.Raid.RaidEndTime == default(DateTime) || raid.Raid.RaidEndTime < DateTime.UtcNow)
-            {
-                sb.AppendLine($"<b>" + _HTML_(I18N.GetString("Time")) + $":</b> Unknown or in the past");
-            }
-            else
-            {
-                sb.AppendLine($"<b>" + _HTML_(I18N.GetString("Ends")) + $":</b> {TimeService.AsShortTime(raid.Raid.RaidEndTime)} (" + _HTML_(I18N.GetString("in")) + $" {TimeService.AsReadableTimespan(raid.Raid.RaidEndTime - DateTime.UtcNow)})");
-            }
+            //if (raid.Raid.RaidEndTime == default(DateTime) || raid.Raid.RaidEndTime < DateTime.UtcNow)
+            //{
+            //    sb.AppendLine($"<b>" + _HTML_(I18N.GetString("Time")) + $":</b> Unknown or in the past");
+            //}
+            //else
+            //{
+            //    sb.AppendLine($"<b>" + _HTML_(I18N.GetString("Ends")) + $":</b> {TimeService.AsShortTime(raid.Raid.RaidEndTime)} (" + _HTML_(I18N.GetString("in")) + $" {TimeService.AsReadableTimespan(raid.Raid.RaidEndTime - DateTime.UtcNow)})");
+            //}
 
             sb.Append(participationSB);
 

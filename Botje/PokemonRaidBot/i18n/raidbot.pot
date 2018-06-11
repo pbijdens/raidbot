@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-05-20 12:13+0200\n"
+"POT-Creation-Date: 2018-06-11 14:04+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -158,36 +158,35 @@ msgid ""
 msgstr ""
 
 #: Modules/RaidCreationWizard.cs:393 Modules/RaidCreationWizard.cs:534
-#: Modules/RaidEditor.cs:306 Modules/RaidEventHandler.cs:414
+#: Modules/RaidEditor.cs:315 Modules/RaidEventHandler.cs:456
 msgid "Raid"
 msgstr ""
 
 #: Modules/RaidCreationWizard.cs:394 Modules/RaidCreationWizard.cs:539
-#: Modules/RaidEditor.cs:307 Modules/RaidEditor.cs:324
-#: Modules/RaidEventHandler.cs:418
+#: Modules/RaidEditor.cs:316 Modules/RaidEditor.cs:333
 msgid "Gym"
 msgstr ""
 
 #: Modules/RaidCreationWizard.cs:395 Modules/RaidCreationWizard.cs:544
-#: Modules/RaidEditor.cs:308 Modules/RaidEditor.cs:328
-#: Modules/RaidEventHandler.cs:422
+#: Modules/RaidEditor.cs:317 Modules/RaidEditor.cs:337
+#: Modules/RaidEventHandler.cs:460
 msgid "Alignment"
 msgstr ""
 
-#: Modules/RaidCreationWizard.cs:396 Modules/RaidEditor.cs:309
-#: Modules/RaidEventHandler.cs:426
+#: Modules/RaidCreationWizard.cs:396 Modules/RaidEditor.cs:318
+#: Modules/RaidEventHandler.cs:464
 msgid "Address"
 msgstr ""
 
-#: Modules/RaidCreationWizard.cs:397 Modules/RaidEditor.cs:310
+#: Modules/RaidCreationWizard.cs:397 Modules/RaidEditor.cs:319
 msgid "GPS Location"
 msgstr ""
 
-#: Modules/RaidCreationWizard.cs:399 Modules/RaidEditor.cs:312
+#: Modules/RaidCreationWizard.cs:399 Modules/RaidEditor.cs:321
 msgid "Available from"
 msgstr ""
 
-#: Modules/RaidCreationWizard.cs:401 Modules/RaidEditor.cs:314
+#: Modules/RaidCreationWizard.cs:401 Modules/RaidEditor.cs:323
 msgid "Available until"
 msgstr ""
 
@@ -195,8 +194,7 @@ msgstr ""
 msgid "Other..."
 msgstr ""
 
-#: Modules/RaidCreationWizard.cs:552 Modules/RaidEditor.cs:329
-#: Modules/RaidEventHandler.cs:443
+#: Modules/RaidCreationWizard.cs:552 Modules/RaidEditor.cs:338
 msgid "Time"
 msgstr ""
 
@@ -212,93 +210,92 @@ msgstr ""
 msgid "I expected a location."
 msgstr ""
 
-#: Modules/RaidEditor.cs:148
+#: Modules/RaidEditor.cs:152
 msgid ""
 "Can't process input. Next time just send me a single line of text in the "
 "form HH:MM where HH is a number between 00 and 23, and MM is a number of "
 "minutes."
 msgstr ""
 
-#: Modules/RaidEditor.cs:196
+#: Modules/RaidEditor.cs:203
 msgid ""
 "Please send me a location using the attach-button in your messaging client."
 msgstr ""
 
-#: Modules/RaidEditor.cs:201
+#: Modules/RaidEditor.cs:208
 msgid "Please send me the updated name of the gym."
 msgstr ""
 
-#: Modules/RaidEditor.cs:206
+#: Modules/RaidEditor.cs:213
 msgid "Please send me the updated name of the Pokémon."
 msgstr ""
 
-#: Modules/RaidEditor.cs:211
+#: Modules/RaidEditor.cs:218
 msgid "Please send me a line of text to add as remarks to the raid."
 msgstr ""
 
-#: Modules/RaidEditor.cs:216
+#: Modules/RaidEditor.cs:223
 msgid ""
 "Enter the exact time that the egg with hatch in the form HH:MM using a 24-"
 "hour clock."
 msgstr ""
 
-#: Modules/RaidEditor.cs:220
+#: Modules/RaidEditor.cs:227
 msgid "Select the new gym alignment from the menu"
 msgstr ""
 
-#: Modules/RaidEditor.cs:221
+#: Modules/RaidEditor.cs:228
 msgid "Select the new gym alignment from the menu."
 msgstr ""
 
-#: Modules/RaidEditor.cs:226
+#: Modules/RaidEditor.cs:233
 msgid ""
 "Updated the gym alignment. Manual refresh of the published raid is required."
 msgstr ""
 
-#: Modules/RaidEditor.cs:227
+#: Modules/RaidEditor.cs:234
 msgid "Thanks. Now please manually refresh the published message."
 msgstr ""
 
-#: Modules/RaidEditor.cs:242
+#: Modules/RaidEditor.cs:250
 msgid ""
 "Publication of this raid has been undone. You may publish the raid again at "
 "your discretion."
 msgstr ""
 
-#: Modules/RaidEditor.cs:247
+#: Modules/RaidEditor.cs:255
 msgid "This raid is not published (anymore). You may publish the raid again."
 msgstr ""
 
-#: Modules/RaidEditor.cs:253 Modules/RaidEventHandler.cs:157
+#: Modules/RaidEditor.cs:261 Modules/RaidEventHandler.cs:157
 msgid "Refreshing..."
 msgstr ""
 
-#: Modules/RaidEditor.cs:315 Modules/RaidEditor.cs:332
-#: Modules/RaidEventHandler.cs:410
+#: Modules/RaidEditor.cs:324 Modules/RaidEditor.cs:341
 msgid "Remarks"
 msgstr ""
 
-#: Modules/RaidEditor.cs:325
+#: Modules/RaidEditor.cs:334
 msgid "Pokémon"
 msgstr ""
 
-#: Modules/RaidEditor.cs:333
+#: Modules/RaidEditor.cs:342
 msgid "Location"
 msgstr ""
 
-#: Modules/RaidEditor.cs:336 Modules/RaidEventHandler.cs:604
+#: Modules/RaidEditor.cs:345 Modules/RaidEventHandler.cs:644
 msgid "Share"
 msgstr ""
 
-#: Modules/RaidEditor.cs:339
+#: Modules/RaidEditor.cs:350
 msgid "Unpublish"
 msgstr ""
 
-#: Modules/RaidEditor.cs:343 Modules/RaidEventHandler.cs:597
+#: Modules/RaidEditor.cs:356 Modules/RaidEventHandler.cs:650
 msgid "📣 Publish"
 msgstr ""
 
-#: Modules/RaidEditor.cs:348 Modules/RaidEventHandler.cs:602
+#: Modules/RaidEditor.cs:362 Modules/RaidEventHandler.cs:640
 msgid "🔄"
 msgstr ""
 
@@ -345,117 +342,90 @@ msgstr ""
 msgid "Registered. Thanks."
 msgstr ""
 
-#: Modules/RaidEventHandler.cs:407
-msgid "Subscribed"
+#: Modules/RaidEventHandler.cs:441
+msgid "now"
 msgstr ""
 
-#: Modules/RaidEventHandler.cs:433
+#: Modules/RaidEventHandler.cs:479
 msgid "Links"
 msgstr ""
 
-#: Modules/RaidEventHandler.cs:433
+#: Modules/RaidEventHandler.cs:479
 msgid "route"
 msgstr ""
 
-#: Modules/RaidEventHandler.cs:433
+#: Modules/RaidEventHandler.cs:479
 msgid "portal map"
 msgstr ""
 
-#: Modules/RaidEventHandler.cs:438
-msgid "Hatches in"
-msgstr ""
-
-#: Modules/RaidEventHandler.cs:447
-msgid "Ends"
-msgstr ""
-
-#: Modules/RaidEventHandler.cs:447
-msgid "in"
-msgstr ""
-
-#: Modules/RaidEventHandler.cs:457
+#: Modules/RaidEventHandler.cs:503
 msgid "Declined"
 msgstr ""
 
-#: Modules/RaidEventHandler.cs:475 Modules/RaidEventHandler.cs:519
+#: Modules/RaidEventHandler.cs:521 Modules/RaidEventHandler.cs:565
 msgid "level"
 msgstr ""
 
-#: Modules/RaidEventHandler.cs:479 Modules/RaidEventHandler.cs:593
+#: Modules/RaidEventHandler.cs:525 Modules/RaidEventHandler.cs:642
 msgid "Maybe"
 msgstr ""
 
-#: Modules/RaidEventHandler.cs:487 Modules/RaidEventHandler.cs:594
+#: Modules/RaidEventHandler.cs:533 Modules/RaidEventHandler.cs:643
 msgid "Done"
 msgstr ""
 
-#: Modules/RaidEventHandler.cs:490
-msgid "In a private chat, use the /level command to set your player level."
-msgstr ""
-
-#: Modules/RaidEventHandler.cs:535
+#: Modules/RaidEventHandler.cs:581
 #, csharp-format
 msgid "there for {0}"
 msgid_plural "there for {0}"
 msgstr[0] ""
 msgstr[1] ""
 
-#: Modules/RaidEventHandler.cs:559
-msgid "Subscriptions"
-msgstr ""
-
-#: Modules/RaidEventHandler.cs:559
-#, csharp-format
-msgid "{0} player"
-msgid_plural "{0} players"
-msgstr[0] ""
-msgstr[1] ""
-
-#: Modules/RaidEventHandler.cs:577
+#: Modules/RaidEventHandler.cs:624
 msgid "Yes"
 msgstr ""
 
-#: Modules/RaidEventHandler.cs:578
+#: Modules/RaidEventHandler.cs:625
 msgid "❤️"
 msgstr ""
 
-#: Modules/RaidEventHandler.cs:579
+#: Modules/RaidEventHandler.cs:626
 msgid "💙"
 msgstr ""
 
-#: Modules/RaidEventHandler.cs:580
+#: Modules/RaidEventHandler.cs:627
 msgid "💛"
 msgstr ""
 
-#: Modules/RaidEventHandler.cs:581
+#: Modules/RaidEventHandler.cs:628
 msgid "No"
 msgstr ""
 
-#: Modules/RaidEventHandler.cs:585
+#: Modules/RaidEventHandler.cs:632
 msgid "I +1"
 msgstr ""
 
-#: Modules/RaidEventHandler.cs:586
+#: Modules/RaidEventHandler.cs:633
 msgid "I +2"
 msgstr ""
 
-#: Modules/RaidEventHandler.cs:587
+#: Modules/RaidEventHandler.cs:634
 msgid "I +3"
 msgstr ""
 
-#: Modules/RaidEventHandler.cs:588
+#: Modules/RaidEventHandler.cs:635
 msgid "I +4"
 msgstr ""
 
-#: Modules/RaidEventHandler.cs:589
+#: Modules/RaidEventHandler.cs:636
 msgid "I +5"
 msgstr ""
 
-#: Modules/RaidEventHandler.cs:603
+#: Modules/RaidEventHandler.cs:641
 msgid "✏️"
 msgstr ""
 
-#: Modules/RaidEventHandler.cs:620
+#: Modules/RaidEventHandler.cs:667
 msgid "Arrived"
 msgstr ""
 
