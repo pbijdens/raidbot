@@ -75,7 +75,7 @@ namespace PokemonRaidBot.Modules
         private void Run()
         {
             var channelID = Settings.PublicationChannel.Value;
-            _log.Info($"Starting worker thread for {nameof(CreateRaidsFromPogoAfo)}");
+            _log.Info($"Starting worker thread for {nameof(SummarizeActiveRaids)}");
             while (!_cts.IsCancellationRequested)
             {
                 try
@@ -113,7 +113,7 @@ namespace PokemonRaidBot.Modules
                         }
 
                         var hash = HashUtils.CalculateSHA1Hash(message.ToString());
-                        if (!string.Equals(hash, updateRecord.Hash) || (DateTime.UtcNow - updateRecord.LastModificationDate > TimeSpan.FromSeconds(60)))
+                        if (!string.Equals(hash, updateRecord.Hash) /*|| (DateTime.UtcNow - updateRecord.LastModificationDate > TimeSpan.FromSeconds(60))*/)
                         {
                             if (updateRecord.MessageID != long.MaxValue)
                             {
@@ -158,14 +158,14 @@ namespace PokemonRaidBot.Modules
                 }
                 catch (Exception ex)
                 {
-                    _log.Error(ex, "Error in cleanup thread. Ignoring.");
+                    _log.Error(ex, "Error in SummarizeActiveRaids thread. Ignoring.");
                 }
                 finally
                 {
                     Thread.Sleep(Interval);
                 }
             }
-            _log.Info($"Stopped worker thread for {nameof(CleanupChannel)}");
+            _log.Info($"Stopped worker thread for {nameof(SummarizeActiveRaids)}");
         }
     }
 }

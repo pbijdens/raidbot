@@ -138,14 +138,14 @@ namespace PokemonRaidBot.Modules
                 }
                 catch (Exception ex)
                 {
-                    _log.Error(ex, "Error in cleanup thread. Ignoring.");
+                    _log.Error(ex, "Error in CreateRaidsFromPogoAfo thread. Ignoring.");
                 }
                 finally
                 {
                     Thread.Sleep(Interval);
                 }
             }
-            _log.Info($"Stopped worker thread for {nameof(CleanupChannel)}");
+            _log.Info($"Stopped worker thread for {nameof(CreateRaidsFromPogoAfo)}");
         }
 
         private void CreateRaidsFromScanResult(PogoAfoMapping map, PogoAfoResult pogoAfoResult, long channel)
