@@ -9,5 +9,7 @@ namespace PokemonRaidBot.Entities
         public DateTime UtcWhen { get; set; }
         public int Extra { get; set; }
         public DateTime UtcArrived { get; set; }
+
+        public string AllValuesAsString() => $"{User?.UsernameOrName()};{UtcWhen};{UtcArrived};{Extra}";
     }
 }

@@ -83,6 +83,7 @@ namespace PokemonRaidBot
             kernel.Bind<IBotModule>().To<Modules.RaidEditor>().InSingletonScope();
             kernel.Bind<IBotModule>().To<Modules.RaidEventHandler>().InSingletonScope();
             kernel.Bind<IBotModule>().To<Modules.CleanupChannel>().InSingletonScope();
+            kernel.Bind<IBotModule>().To<Modules.UpdatePublishedRaidMessages>().InSingletonScope();
             kernel.Bind<IBotModule>().To<Modules.CreateRaidsFromPogoAfo>().InSingletonScope();
             kernel.Bind<IBotModule>().To<Modules.SummarizeActiveRaids>().InSingletonScope();
 

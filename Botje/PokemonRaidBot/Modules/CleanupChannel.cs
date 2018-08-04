@@ -67,7 +67,8 @@ namespace PokemonRaidBot.Modules
                     // TODO: Delete raids that have been published automatically to other channels
 
                     var publishedRaidsForWhichMessagesMustBeDeleted = raidList.Where(x => x?.Raid.TelegramMessageID != null && x.Raid?.RaidEndTime <= DateTime.UtcNow).ToArray();
-                    foreach (var rp in publishedRaidsForWhichMessagesMustBeDeleted.ToArray())
+                    var rp = publishedRaidsForWhichMessagesMustBeDeleted.FirstOrDefault();
+                    if (null != rp)
                     {
                         try
                         {
@@ -84,16 +85,6 @@ namespace PokemonRaidBot.Modules
                             collection.Update(rp);
                         }
                     }
-
-                    var publishedRaidsThatNeedUpdating = raidList.Where(x => (x != null) && (x.Raid != null) && (x.LastRefresh < x.LastModificationTime) && (DateTime.UtcNow - x.LastRefresh > TimeSpan.FromSeconds(6)) && (x.Raid.TelegramMessageID != null));
-                    foreach (var rp in publishedRaidsThatNeedUpdating.ToArray())
-                    {
-                        _log.Trace($"Refreshing message {rp.PublicID} - last refresh {rp.LastRefresh} last edit {rp.LastModificationTime}");
-
-                        rp.LastRefresh = DateTime.UtcNow;
-                        collection.Update(rp);
-                        RaidEventHandler.UpdateRaidMessage(channelID, rp.Raid.TelegramMessageID, null, rp.PublicID, "channel");
-                    }
                 }
                 catch (ThreadAbortException)
                 {
@@ -106,7 +97,8 @@ namespace PokemonRaidBot.Modules
                 }
                 finally
                 {
-                    Thread.Sleep(TimeSpan.FromSeconds(1));
+                    // No hurry
+                    Thread.Sleep(TimeSpan.FromSeconds(30));
                 }
             }
             _log.Info($"Stopped worker thread for {nameof(CleanupChannel)}");

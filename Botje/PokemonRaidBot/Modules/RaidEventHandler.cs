@@ -483,20 +483,6 @@ namespace PokemonRaidBot.Modules
                 sb.AppendLine($"<b>" + _HTML_(I18N.GetString("Links")) + $":</b> ({externalurls}<a href=\"https://www.google.com/maps/?daddr={lat},{lon}\">" + _HTML_(I18N.GetString("route")) + $"</a>, <a href=\"https://ingress.com/intel?ll={lat},{lon}&z=17\">" + _HTML_(I18N.GetString("portal map")) + $"</a>)");
             }
 
-            //if (raid.Raid.RaidUnlockTime != default(DateTime) && raid.Raid.RaidUnlockTime >= DateTime.UtcNow)
-            //{
-            //    sb.AppendLine($"<b>" + _HTML_(I18N.GetString("Hatches in")) + $":</b> {TimeService.AsShortTime(raid.Raid.RaidUnlockTime)} (over {TimeService.AsReadableTimespan(raid.Raid.RaidUnlockTime - DateTime.UtcNow)})");
-            //}
-
-            //if (raid.Raid.RaidEndTime == default(DateTime) || raid.Raid.RaidEndTime < DateTime.UtcNow)
-            //{
-            //    sb.AppendLine($"<b>" + _HTML_(I18N.GetString("Time")) + $":</b> Unknown or in the past");
-            //}
-            //else
-            //{
-            //    sb.AppendLine($"<b>" + _HTML_(I18N.GetString("Ends")) + $":</b> {TimeService.AsShortTime(raid.Raid.RaidEndTime)} (" + _HTML_(I18N.GetString("in")) + $" {TimeService.AsReadableTimespan(raid.Raid.RaidEndTime - DateTime.UtcNow)})");
-            //}
-
             sb.Append(participationSB);
 
             var naySayers = raid.Rejected.Select(x => x).OrderBy(x => x.ShortName());
@@ -536,8 +522,6 @@ namespace PokemonRaidBot.Modules
                 var str = string.Join(", ", alreadyDone.Select(x => $"{x.ShortName()}"));
                 sb.AppendLine($"<b>" + _HTML_(I18N.GetString("Done")) + $":</b> {str}");
             }
-
-            //sb.AppendLine($"\n<i>" + _HTML_(I18N.GetString("In a private chat, use the /level command to set your player level.")) + $"</i>");
 
             sb.AppendLine($"\n#raid updated: <i>{TimeService.AsFullTime(DateTime.UtcNow)}</i>");
             return sb.ToString();
@@ -602,13 +586,6 @@ namespace PokemonRaidBot.Modules
 
             var tpsSub = string.Join(" ", tpsElements);
             tps = $"{counter} ({tpsSub})";
-
-            //Removed, alredy summarised at the top of the message
-            //if (counter > 0)
-            //{
-            //    sb.AppendLine($"");
-            //    sb.AppendLine($"<b>" + _HTML_(I18N.GetString("Subscriptions")) + $":</b> " + _HTML_(I18N.GetPluralString("{0} player", "{0} players", counter, counter)));
-            //}
         }
 
         private InlineKeyboardMarkup CreateMarkupFor(RaidParticipation raid)

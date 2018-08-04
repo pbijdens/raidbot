@@ -2,6 +2,7 @@
 using Botje.Messaging.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace PokemonRaidBot.Entities
 {
@@ -59,6 +60,14 @@ namespace PokemonRaidBot.Entities
 
         // List of publication channels to which this message was pushed.
         public List<PublicationEntry> Publications { get; set; }
+
+        public string AllValuesAsString()
+        {
+            string sources = String.Join(",", Sources.Select(x => x.AllValuesAsString()));
+            string publications = String.Join(",", Publications.Select(x => x.AllValuesAsString()));
+            return $"{UniqueID};{Location?.Latitude};{Location?.Longitude};{Address};{Raid};{Gym};{Alignment};{RaidUnlockTime};{RaidEndTime};{UpdateCount};{Remarks};{TelegramMessageID};{sources};{publications}";
+        }
+
     }
 
     public class ExternalSource
@@ -77,11 +86,21 @@ namespace PokemonRaidBot.Entities
         /// URL to the external system that created this raid.
         /// </summary>
         public string URL { get; set; }
+
+        public string AllValuesAsString()
+        {
+            return $"{SourceID};{ExternalID};{URL}";
+        }
     }
 
     public class PublicationEntry
     {
         public long ChannelID { get; set; }
         public long TelegramMessageID { get; set; }
+
+        public string AllValuesAsString()
+        {
+            return $"{ChannelID};{TelegramMessageID}";
+        }
     }
 }

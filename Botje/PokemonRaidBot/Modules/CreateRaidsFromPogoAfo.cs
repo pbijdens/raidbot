@@ -155,7 +155,7 @@ namespace PokemonRaidBot.Modules
             foreach (var entry in pogoAfoResult.raids ?? new Dictionary<string, PogoAfoRaidInfo>())
             {
                 // TODO: Should be part of the query already, why ask for items then discard them?
-                if (entry.Value.raid_level < 5 && !entry.Value.ex_trigger)
+                if (entry.Value.raid_level < 4 && !entry.Value.ex_trigger)
                 {
                     _log.Trace($"{SourceID} - Ignoring raid {entry.Key} @{entry.Value.raid_battle} level: {entry.Value.raid_level} / trigger: {entry.Value.ex_trigger} / pokémon: {entry.Value.raid_pokemon_id} / gym: {entry.Value.name} / url: {entry.Value.url}");
                     continue;
@@ -182,7 +182,6 @@ namespace PokemonRaidBot.Modules
                     _log.Trace($"Found existing raid with same external ID: pokémon: {entry.Value.raid_pokemon_id} / gym: {entry.Value.name} / url: {entry.Value.url} === id: {raidStruct.PublicID} / {raidStruct.Raid.Raid} / {raidStruct.Raid.Gym}");
                 }
 
-                bool updated = false;
                 // search for a PUBLISHED raid that's similar in location and time
                 if (null == raidStruct)
                 {
@@ -207,11 +206,10 @@ namespace PokemonRaidBot.Modules
                     }
                 }
 
+                string currentValues;
                 // Create a new raid
                 if (null == raidStruct)
                 {
-                    updated = true;
-
                     _log.Trace($"{SourceID} - Adding new raid {entry.Key} @{entry.Value.raid_battle} / pokémon: {entry.Value.raid_pokemon_id} / gym: {entry.Value.name} / url: {entry.Value.url}");
                     raidStruct = new RaidParticipation
                     {
@@ -231,10 +229,14 @@ namespace PokemonRaidBot.Modules
                         }
                     };
                     raidParticipationCollection.Insert(raidStruct);
+                    currentValues = "";
+                }
+                else
+                {
+                    currentValues = raidStruct.AllValuesAsString();
                 }
 
                 // update raidStruct
-                string currentValue = raidStruct.Raid.Raid;
                 if (entry.Value.raid_pokemon_id != null)
                 {
                     var pokedexEntry = Pokedex.All.Where(x => x.id == entry.Value.raid_pokemon_id).FirstOrDefault();
@@ -251,15 +253,13 @@ namespace PokemonRaidBot.Modules
                 {
                     raidStruct.Raid.Raid = $"Level {entry.Value.raid_level} raid";
                 }
-                if (currentValue != raidStruct.Raid.Raid) updated = true;
 
-                if (raidStruct.Raid.RaidUnlockTime != raidStartTime.UtcDateTime) { raidStruct.Raid.RaidUnlockTime = raidStartTime.UtcDateTime; updated = true; }
-                if (raidStruct.Raid.RaidEndTime != raidEndTime.UtcDateTime) { raidStruct.Raid.RaidEndTime = raidEndTime.UtcDateTime; updated = true; }
-                if (raidStruct.Raid.Gym != entry.Value.name) { raidStruct.Raid.Gym = entry.Value.name; updated = true; }
+                if (raidStruct.Raid.RaidUnlockTime != raidStartTime.UtcDateTime) { raidStruct.Raid.RaidUnlockTime = raidStartTime.UtcDateTime; }
+                if (raidStruct.Raid.RaidEndTime != raidEndTime.UtcDateTime) { raidStruct.Raid.RaidEndTime = raidEndTime.UtcDateTime; }
+                if (raidStruct.Raid.Gym != entry.Value.name) { raidStruct.Raid.Gym = entry.Value.name; }
                 if (entry.Value.ex_trigger && string.IsNullOrEmpty(raidStruct.Raid.Remarks))
                 {
                     raidStruct.Raid.Remarks = $"EX Raid Trigger";
-                    updated = true;
                 }
 
                 if (raidStruct.Raid.Publications == null)
@@ -275,7 +275,6 @@ namespace PokemonRaidBot.Modules
                         Latitude = entry.Value.latitude.Value,
                         Longitude = entry.Value.longitude.Value
                     };
-                    updated = true;
                 }
 
                 if (string.IsNullOrEmpty(raidStruct.Raid.Address))
@@ -283,7 +282,8 @@ namespace PokemonRaidBot.Modules
                     UpdateAddress(raidParticipationCollection, raidStruct, raidStruct.Raid.Location);
                 }
 
-                if (updated)
+                var newValues = raidStruct.AllValuesAsString();
+                if (newValues != currentValues)
                 {
                     if (!raidStruct.Raid.Publications.Where(x => x.ChannelID == channel).Any())
                     {
@@ -318,11 +318,15 @@ namespace PokemonRaidBot.Modules
 
         private void UpdateAddress(DbSet<RaidParticipation> raidCollection, RaidParticipation raid, Location location)
         {
+            raid.Raid.Address = $"{location.Latitude} {location.Longitude}";
             bool wasInTime = AddressServicie.GetAddress(location.Latitude, location.Longitude).ContinueWith((t) =>
             {
-                raid.Raid.Address = t.Result;
-                raid.LastModificationTime = DateTime.UtcNow;
-                raidCollection.Update(raid);
+                if (raid.Raid.Address != t.Result && !string.IsNullOrWhiteSpace(t.Result))
+                {
+                    raid.Raid.Address = t.Result;
+                    raid.LastModificationTime = DateTime.UtcNow;
+                    raidCollection.Update(raid);
+                }
             }).Wait(TimeSpan.FromSeconds(5));
 
             if (wasInTime)

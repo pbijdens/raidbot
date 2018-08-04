@@ -53,5 +53,14 @@ namespace PokemonRaidBot.Entities
             }
             return result;
         }
+
+        public string AllValuesAsString()
+        {
+            string participants = string.Join(",", (Participants?.Select(x => string.Concat(x.Key.ToString(), String.Join("|", x.Value?.Select(v => v.AllValuesAsString()).ToList() ?? new List<string>()))).ToList() ?? new List<string>()));
+            string rejected = string.Join(",", (Rejected?.Select(x => x.UsernameOrName()).ToList() ?? new List<string>()));
+            string maybe = string.Join(",", (Maybe?.Select(x => x.UsernameOrName()).ToList() ?? new List<string>()));
+            string done = string.Join(",", (Done?.Select(x => x.UsernameOrName()).ToList() ?? new List<string>()));
+            return $"{UniqueID};{PublicID};{Raid?.AllValuesAsString()};{participants};{rejected};{done};{maybe};{IsPublished};{LastModificationTime}";
+        }
     }
 }
